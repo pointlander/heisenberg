@@ -6,12 +6,24 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 )
 
 // Matrix is an algebriac matrix
 type Matrix struct {
 	R, C   int
 	Matrix []complex64
+}
+
+func (m Matrix) String() string {
+	output := ""
+	for i := 0; i < m.R; i++ {
+		for j := 0; j < m.C; j++ {
+			output += fmt.Sprintf("%f ", m.Matrix[i*m.C+j])
+		}
+		output += fmt.Sprintf("\n")
+	}
+	return output
 }
 
 // Tensor product is the tensor product
@@ -55,6 +67,63 @@ func Multiply(a *Matrix, b *Matrix) *Matrix {
 	}
 }
 
+// ControlledNot controlled not gate
+func ControlledNot(n int, c []int, t int) *Matrix {
+	m := &Matrix{
+		R: 2,
+		C: 2,
+		Matrix: []complex64{
+			1, 0,
+			0, 1,
+		},
+	}
+	for i := 0; i < n-1; i++ {
+		m = Tensor(m, m)
+	}
+	d := m.R
+	f := fmt.Sprintf("%s%s%s", "%0", strconv.Itoa(n), "s")
+
+	index := make([]int64, 0)
+	for i := 0; i < d; i++ {
+		bits := []rune(fmt.Sprintf(f, strconv.FormatInt(int64(i), 2)))
+
+		// Apply X
+		apply := true
+		for _, j := range c {
+			if bits[j] == '0' {
+				apply = false
+				break
+			}
+		}
+
+		if apply {
+			if bits[t] == '0' {
+				bits[t] = '1'
+			} else {
+				bits[t] = '0'
+			}
+		}
+
+		v, err := strconv.ParseInt(string(bits), 2, 0)
+		if err != nil {
+			panic(fmt.Sprintf("parse int: %v", err))
+		}
+
+		index = append(index, v)
+	}
+
+	g := Matrix{
+		R:      m.R,
+		C:      m.C,
+		Matrix: make([]complex64, m.R*m.C),
+	}
+	for i, ii := range index {
+		copy(g.Matrix[i*g.C:(i+1)*g.C], m.Matrix[int(ii)*g.C:int(ii + 1)*g.C])
+	}
+
+	return &g
+}
+
 func main() {
 	cnot := Matrix{
 		R: 2,
@@ -65,12 +134,7 @@ func main() {
 		},
 	}
 	unitary := Tensor(&cnot, &cnot)
-	for i := 0; i < unitary.R; i++ {
-		for j := 0; j < unitary.C; j++ {
-			fmt.Printf("%f ", unitary.Matrix[i*unitary.C+j])
-		}
-		fmt.Printf("\n")
-	}
+	fmt.Printf("%s", unitary)
 
 	cnot = Matrix{
 		R: 4,
@@ -84,10 +148,17 @@ func main() {
 	}
 	fmt.Printf("\n")
 	unitary = Multiply(&cnot, &cnot)
-	for i := 0; i < unitary.R; i++ {
-		for j := 0; j < unitary.C; j++ {
-			fmt.Printf("%f ", unitary.Matrix[i*unitary.C+j])
-		}
-		fmt.Printf("\n")
-	}
+	fmt.Printf("%s", unitary)
+
+	fmt.Printf("\n")
+	a := ControlledNot(3, []int{0}, 1)
+	fmt.Printf("%s", a)
+
+	fmt.Printf("\n")
+	b := ControlledNot(3, []int{0}, 2)
+	fmt.Printf("%s", b)
+
+	fmt.Printf("\n")
+	c := Multiply(a, b)
+	fmt.Printf("%s", c)
 }
