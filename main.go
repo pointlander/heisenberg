@@ -67,6 +67,27 @@ func Multiply(a *Matrix, b *Matrix) *Matrix {
 	}
 }
 
+// Transpose transposes a matrix
+func Transpose(a *Matrix) {
+	for i := 0; i < a.R; i++ {
+		for j := 0; j < a.C; j++ {
+			a.Matrix[j*a.C + i] = a.Matrix[i*a.C + j]
+		}
+	}
+	a.R, a.C = a.C, a.R
+}
+
+// Copy copies a matrix`
+func Copy(a *Matrix) *Matrix {
+	cp := &Matrix{
+		R: a.R,
+		C: a.C,
+		Matrix: make([]complex64, len(a.Matrix)),
+	}
+	copy(cp.Matrix, a.Matrix)
+	return cp
+}
+
 // ControlledNot controlled not gate
 func ControlledNot(n int, c []int, t int) *Matrix {
 	m := &Matrix{
@@ -155,10 +176,19 @@ func main() {
 	fmt.Printf("%s", a)
 
 	fmt.Printf("\n")
-	b := ControlledNot(3, []int{0}, 2)
+	b := ControlledNot(3, []int{0, 1}, 2)
 	fmt.Printf("%s", b)
 
 	fmt.Printf("\n")
 	c := Multiply(a, b)
 	fmt.Printf("%s", c)
+
+	fmt.Printf("\n")
+	d := Copy(c)
+	Transpose(d)
+	var sum complex64
+	for i := range c.Matrix {
+		sum += d.Matrix[i] - c.Matrix[i]
+	}
+	fmt.Println(sum)
 }
