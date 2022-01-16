@@ -71,7 +71,7 @@ func Multiply(a *Matrix, b *Matrix) *Matrix {
 func Transpose(a *Matrix) {
 	for i := 0; i < a.R; i++ {
 		for j := 0; j < a.C; j++ {
-			a.Matrix[j*a.C + i] = a.Matrix[i*a.C + j]
+			a.Matrix[j*a.R + i] = a.Matrix[i*a.C + j]
 		}
 	}
 	a.R, a.C = a.C, a.R
