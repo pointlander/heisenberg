@@ -47,6 +47,7 @@ func Tensor(a *Matrix, b *Matrix) *Matrix {
 
 // Multiply multiplies to matricies
 func Multiply(a *Matrix, b *Matrix) *Matrix {
+	fmt.Println(a.C, a.R, b.C, b.R)
 	if a.C != b.R {
 		panic("invalid dimensions")
 	}
@@ -71,7 +72,7 @@ func Multiply(a *Matrix, b *Matrix) *Matrix {
 func Transpose(a *Matrix) {
 	for i := 0; i < a.R; i++ {
 		for j := 0; j < a.C; j++ {
-			a.Matrix[j*a.R + i] = a.Matrix[i*a.C + j]
+			a.Matrix[j*a.R+i] = a.Matrix[i*a.C+j]
 		}
 	}
 	a.R, a.C = a.C, a.R
@@ -80,8 +81,8 @@ func Transpose(a *Matrix) {
 // Copy copies a matrix`
 func Copy(a *Matrix) *Matrix {
 	cp := &Matrix{
-		R: a.R,
-		C: a.C,
+		R:      a.R,
+		C:      a.C,
 		Matrix: make([]complex64, len(a.Matrix)),
 	}
 	copy(cp.Matrix, a.Matrix)
@@ -98,9 +99,11 @@ func ControlledNot(n int, c []int, t int) *Matrix {
 			0, 1,
 		},
 	}
+	l := m
 	for i := 0; i < n-1; i++ {
-		m = Tensor(m, m)
+		l = Tensor(m, l)
 	}
+	m = l
 	d := m.R
 	f := fmt.Sprintf("%s%s%s", "%0", strconv.Itoa(n), "s")
 
@@ -139,7 +142,7 @@ func ControlledNot(n int, c []int, t int) *Matrix {
 		Matrix: make([]complex64, m.R*m.C),
 	}
 	for i, ii := range index {
-		copy(g.Matrix[i*g.C:(i+1)*g.C], m.Matrix[int(ii)*g.C:int(ii + 1)*g.C])
+		copy(g.Matrix[i*g.C:(i+1)*g.C], m.Matrix[int(ii)*g.C:int(ii+1)*g.C])
 	}
 
 	return &g
@@ -191,4 +194,28 @@ func main() {
 		sum += d.Matrix[i] - c.Matrix[i]
 	}
 	fmt.Println(sum)
+
+	zero := Matrix{
+		R: 1,
+		C: 2,
+		Matrix: []complex64{
+			1, 0,
+		},
+	}
+	one := Matrix{
+		R: 1,
+		C: 2,
+		Matrix: []complex64{
+			0, 1,
+		},
+	}
+	fmt.Printf("\n")
+	state := Tensor(&one, &zero)
+	state = Tensor(&zero, state)
+	fmt.Println(state)
+
+	fmt.Printf("\n")
+	Transpose(state)
+	output := Multiply(c, state)
+	fmt.Println(output)
 }
