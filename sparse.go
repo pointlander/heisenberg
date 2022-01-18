@@ -42,8 +42,13 @@ func (a *Sparse64) Tensor(b *Sparse64) *Sparse64 {
 					if values == nil {
 						values = make(map[int]complex64)
 					}
-					values[i*b.C+j] = ii * jj
-					output[x*b.R+y] = values
+					value := ii * jj
+					if value != 0 {
+						values[i*b.C+j] = value
+					}
+					if len(values) > 0 {
+						output[x*b.R+y] = values
+					}
 				}
 			}
 		}
@@ -76,8 +81,12 @@ func (a *Sparse64) Multiply(b *Sparse64) *Sparse64 {
 			if values == nil {
 				values = make(map[int]complex64)
 			}
-			values[j] = sum
-			output[x] = values
+			if sum != 0 {
+				values[j] = sum
+			}
+			if len(values) > 0 {
+				output[x] = values
+			}
 		}
 	}
 	return &Sparse64{
@@ -219,8 +228,13 @@ func (a *Sparse128) Tensor(b *Sparse128) *Sparse128 {
 					if values == nil {
 						values = make(map[int]complex128)
 					}
-					values[i*b.C+j] = ii * jj
-					output[x*b.R+y] = values
+					value := ii * jj
+					if value != 0 {
+						values[i*b.C+j] = value
+					}
+					if len(values) > 0 {
+						output[x*b.R+y] = values
+					}
 				}
 			}
 		}
@@ -253,8 +267,12 @@ func (a *Sparse128) Multiply(b *Sparse128) *Sparse128 {
 			if values == nil {
 				values = make(map[int]complex128)
 			}
-			values[j] = sum
-			output[x] = values
+			if sum != 0 {
+				values[j] = sum
+			}
+			if len(values) > 0 {
+				output[x] = values
+			}
 		}
 	}
 	return &Sparse128{
