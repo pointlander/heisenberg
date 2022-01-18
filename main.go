@@ -10,16 +10,16 @@ import (
 )
 
 // Matrix is an algebriac matrix
-type Matrix struct {
+type Matrix64 struct {
 	R, C   int
 	Matrix []complex64
 }
 
-func (m Matrix) String() string {
+func (a Matrix64) String() string {
 	output := ""
-	for i := 0; i < m.R; i++ {
-		for j := 0; j < m.C; j++ {
-			output += fmt.Sprintf("%f ", m.Matrix[i*m.C+j])
+	for i := 0; i < a.R; i++ {
+		for j := 0; j < a.C; j++ {
+			output += fmt.Sprintf("%f ", a.Matrix[i*a.C+j])
 		}
 		output += fmt.Sprintf("\n")
 	}
@@ -27,7 +27,7 @@ func (m Matrix) String() string {
 }
 
 // Tensor product is the tensor product
-func Tensor(a *Matrix, b *Matrix) *Matrix {
+func (a *Matrix64) Tensor(b *Matrix64) *Matrix64 {
 	output := make([]complex64, 0, len(a.Matrix)*len(b.Matrix))
 	for x := 0; x < a.R; x++ {
 		for y := 0; y < b.R; y++ {
@@ -38,7 +38,7 @@ func Tensor(a *Matrix, b *Matrix) *Matrix {
 			}
 		}
 	}
-	return &Matrix{
+	return &Matrix64{
 		R:      a.R * b.R,
 		C:      a.C * b.C,
 		Matrix: output,
@@ -46,7 +46,7 @@ func Tensor(a *Matrix, b *Matrix) *Matrix {
 }
 
 // Multiply multiplies to matricies
-func Multiply(a *Matrix, b *Matrix) *Matrix {
+func (a *Matrix64) Multiply(b *Matrix64) *Matrix64 {
 	fmt.Println(a.C, a.R, b.C, b.R)
 	if a.C != b.R {
 		panic("invalid dimensions")
@@ -61,7 +61,7 @@ func Multiply(a *Matrix, b *Matrix) *Matrix {
 			output = append(output, sum)
 		}
 	}
-	return &Matrix{
+	return &Matrix64{
 		R:      a.R,
 		C:      b.C,
 		Matrix: output,
@@ -69,7 +69,7 @@ func Multiply(a *Matrix, b *Matrix) *Matrix {
 }
 
 // Transpose transposes a matrix
-func Transpose(a *Matrix) {
+func (a *Matrix64) Transpose() {
 	for i := 0; i < a.R; i++ {
 		for j := 0; j < a.C; j++ {
 			a.Matrix[j*a.R+i] = a.Matrix[i*a.C+j]
@@ -79,8 +79,8 @@ func Transpose(a *Matrix) {
 }
 
 // Copy copies a matrix`
-func Copy(a *Matrix) *Matrix {
-	cp := &Matrix{
+func (a *Matrix64) Copy() *Matrix64 {
+	cp := &Matrix64{
 		R:      a.R,
 		C:      a.C,
 		Matrix: make([]complex64, len(a.Matrix)),
@@ -90,8 +90,8 @@ func Copy(a *Matrix) *Matrix {
 }
 
 // ControlledNot controlled not gate
-func ControlledNot(n int, c []int, t int) *Matrix {
-	m := &Matrix{
+func ControlledNot(n int, c []int, t int) *Matrix64 {
+	p := &Matrix64{
 		R: 2,
 		C: 2,
 		Matrix: []complex64{
@@ -99,12 +99,11 @@ func ControlledNot(n int, c []int, t int) *Matrix {
 			0, 1,
 		},
 	}
-	l := m
+	q := p
 	for i := 0; i < n-1; i++ {
-		l = Tensor(m, l)
+		q = p.Tensor(q)
 	}
-	m = l
-	d := m.R
+	d := q.R
 	f := fmt.Sprintf("%s%s%s", "%0", strconv.Itoa(n), "s")
 
 	index := make([]int64, 0)
@@ -136,20 +135,20 @@ func ControlledNot(n int, c []int, t int) *Matrix {
 		index = append(index, v)
 	}
 
-	g := Matrix{
-		R:      m.R,
-		C:      m.C,
-		Matrix: make([]complex64, m.R*m.C),
+	g := Matrix64{
+		R:      q.R,
+		C:      q.C,
+		Matrix: make([]complex64, q.R*q.C),
 	}
 	for i, ii := range index {
-		copy(g.Matrix[i*g.C:(i+1)*g.C], m.Matrix[int(ii)*g.C:int(ii+1)*g.C])
+		copy(g.Matrix[i*g.C:(i+1)*g.C], q.Matrix[int(ii)*g.C:int(ii+1)*g.C])
 	}
 
 	return &g
 }
 
 func main() {
-	cnot := Matrix{
+	cnot := Matrix64{
 		R: 2,
 		C: 2,
 		Matrix: []complex64{
@@ -157,10 +156,10 @@ func main() {
 			0, 1,
 		},
 	}
-	unitary := Tensor(&cnot, &cnot)
+	unitary := cnot.Tensor(&cnot)
 	fmt.Printf("%s", unitary)
 
-	cnot = Matrix{
+	cnot = Matrix64{
 		R: 4,
 		C: 4,
 		Matrix: []complex64{
@@ -171,7 +170,7 @@ func main() {
 		},
 	}
 	fmt.Printf("\n")
-	unitary = Multiply(&cnot, &cnot)
+	unitary = cnot.Multiply(&cnot)
 	fmt.Printf("%s", unitary)
 
 	fmt.Printf("\n")
@@ -183,26 +182,26 @@ func main() {
 	fmt.Printf("%s", b)
 
 	fmt.Printf("\n")
-	c := Multiply(a, b)
+	c := a.Multiply(b)
 	fmt.Printf("%s", c)
 
 	fmt.Printf("\n")
-	d := Copy(c)
-	Transpose(d)
+	d := c.Copy()
+	d.Transpose()
 	var sum complex64
 	for i := range c.Matrix {
 		sum += d.Matrix[i] - c.Matrix[i]
 	}
 	fmt.Println(sum)
 
-	zero := Matrix{
+	zero := Matrix64{
 		R: 1,
 		C: 2,
 		Matrix: []complex64{
 			1, 0,
 		},
 	}
-	one := Matrix{
+	one := Matrix64{
 		R: 1,
 		C: 2,
 		Matrix: []complex64{
@@ -210,12 +209,12 @@ func main() {
 		},
 	}
 	fmt.Printf("\n")
-	state := Tensor(&one, &zero)
-	state = Tensor(&zero, state)
+	state := one.Tensor(&zero)
+	state = zero.Tensor(state)
 	fmt.Println(state)
 
 	fmt.Printf("\n")
-	Transpose(state)
-	output := Multiply(c, state)
+	state.Transpose()
+	output := c.Multiply(state)
 	fmt.Println(output)
 }
