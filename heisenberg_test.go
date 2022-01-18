@@ -59,7 +59,7 @@ func TestTensor64(t *testing.T) {
 			},
 		},
 	}
-	q := p.Copy()
+	q := p
 	for i := 0; i < 3; i++ {
 		q = p.Tensor(q)
 	}
@@ -106,7 +106,7 @@ func TestTensor128(t *testing.T) {
 			},
 		},
 	}
-	q := p.Copy()
+	q := p
 	for i := 0; i < 3; i++ {
 		q = p.Tensor(q)
 	}
