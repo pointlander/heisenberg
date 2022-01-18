@@ -1,4 +1,4 @@
-module github.com/pointlander/qlfsr
+module github.com/pointlander/heisenberg
 
 go 1.16
 

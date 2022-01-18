@@ -1,4 +1,4 @@
-// Copyright 2022 The QLFSR Authors. All rights reserved.
+// Copyright 2022 The Heisenberg Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-// Matrix is an algebriac matrix
+// Matrix64 is an algebriac matrix
 type Matrix64 struct {
 	R, C   int
 	Matrix []complex64
