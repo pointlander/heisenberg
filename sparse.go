@@ -12,7 +12,7 @@ import (
 // Sparse64 is an algebriac matrix
 type Sparse64 struct {
 	R, C   int
-	Matrix map[int]map[int]complex64
+	Matrix []map[int]complex64
 }
 
 func (a Sparse64) String() string {
@@ -33,7 +33,7 @@ func (a Sparse64) String() string {
 
 // Tensor product is the tensor product
 func (a *Sparse64) Tensor(b *Sparse64) *Sparse64 {
-	output := make(map[int]map[int]complex64)
+	output := make([]map[int]complex64, a.R*b.R)
 	for x, xx := range a.Matrix {
 		for y, yy := range b.Matrix {
 			for i, ii := range xx {
@@ -65,7 +65,7 @@ func (a *Sparse64) Multiply(b *Sparse64) *Sparse64 {
 	if a.C != b.R {
 		panic("invalid dimensions")
 	}
-	output := make(map[int]map[int]complex64)
+	output := make([]map[int]complex64, a.R)
 	for j := 0; j < b.C; j++ {
 		for x, xx := range a.Matrix {
 			var sum complex64
@@ -116,7 +116,7 @@ func (a *Sparse64) Copy() *Sparse64 {
 	cp := &Sparse64{
 		R:      a.R,
 		C:      a.C,
-		Matrix: make(map[int]map[int]complex64),
+		Matrix: make([]map[int]complex64, a.R),
 	}
 	for a, aa := range a.Matrix {
 		value := cp.Matrix[a]
@@ -136,12 +136,12 @@ func (Sparse64) ControlledNot(n int, c []int, t int) *Sparse64 {
 	p := &Sparse64{
 		R: 2,
 		C: 2,
-		Matrix: map[int]map[int]complex64{
-			0: map[int]complex64{
+		Matrix: []map[int]complex64{
+			map[int]complex64{
 				0: 1,
 				1: 0,
 			},
-			1: map[int]complex64{
+			map[int]complex64{
 				0: 0,
 				1: 1,
 			},
@@ -186,7 +186,7 @@ func (Sparse64) ControlledNot(n int, c []int, t int) *Sparse64 {
 	g := Sparse64{
 		R:      q.R,
 		C:      q.C,
-		Matrix: make(map[int]map[int]complex64),
+		Matrix: make([]map[int]complex64, q.R),
 	}
 	for i, ii := range index {
 		g.Matrix[i] = q.Matrix[int(ii)]
@@ -198,7 +198,7 @@ func (Sparse64) ControlledNot(n int, c []int, t int) *Sparse64 {
 // Sparse128 is an algebriac matrix
 type Sparse128 struct {
 	R, C   int
-	Matrix map[int]map[int]complex128
+	Matrix []map[int]complex128
 }
 
 func (a Sparse128) String() string {
@@ -219,7 +219,7 @@ func (a Sparse128) String() string {
 
 // Tensor product is the tensor product
 func (a *Sparse128) Tensor(b *Sparse128) *Sparse128 {
-	output := make(map[int]map[int]complex128)
+	output := make([]map[int]complex128, a.R*b.R)
 	for x, xx := range a.Matrix {
 		for y, yy := range b.Matrix {
 			for i, ii := range xx {
@@ -251,7 +251,7 @@ func (a *Sparse128) Multiply(b *Sparse128) *Sparse128 {
 	if a.C != b.R {
 		panic("invalid dimensions")
 	}
-	output := make(map[int]map[int]complex128)
+	output := make([]map[int]complex128, a.R)
 	for j := 0; j < b.C; j++ {
 		for x, xx := range a.Matrix {
 			var sum complex128
@@ -302,7 +302,7 @@ func (a *Sparse128) Copy() *Sparse128 {
 	cp := &Sparse128{
 		R:      a.R,
 		C:      a.C,
-		Matrix: make(map[int]map[int]complex128),
+		Matrix: make([]map[int]complex128, a.R),
 	}
 	for a, aa := range a.Matrix {
 		value := cp.Matrix[a]
@@ -322,12 +322,12 @@ func (Sparse128) ControlledNot(n int, c []int, t int) *Sparse128 {
 	p := &Sparse128{
 		R: 2,
 		C: 2,
-		Matrix: map[int]map[int]complex128{
-			0: map[int]complex128{
+		Matrix: []map[int]complex128{
+			map[int]complex128{
 				0: 1,
 				1: 0,
 			},
-			1: map[int]complex128{
+			map[int]complex128{
 				0: 0,
 				1: 1,
 			},
@@ -372,7 +372,7 @@ func (Sparse128) ControlledNot(n int, c []int, t int) *Sparse128 {
 	g := Sparse128{
 		R:      q.R,
 		C:      q.C,
-		Matrix: make(map[int]map[int]complex128),
+		Matrix: make([]map[int]complex128, q.R),
 	}
 	for i, ii := range index {
 		g.Matrix[i] = q.Matrix[int(ii)]

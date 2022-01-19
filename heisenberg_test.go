@@ -48,12 +48,12 @@ func TestTensor64(t *testing.T) {
 	p := &Sparse64{
 		R: 2,
 		C: 2,
-		Matrix: map[int]map[int]complex64{
-			0: map[int]complex64{
+		Matrix: []map[int]complex64{
+			map[int]complex64{
 				0: 1,
 				1: 0,
 			},
-			1: map[int]complex64{
+			map[int]complex64{
 				0: 0,
 				1: 1,
 			},
@@ -95,12 +95,12 @@ func TestTensor128(t *testing.T) {
 	p := &Sparse128{
 		R: 2,
 		C: 2,
-		Matrix: map[int]map[int]complex128{
-			0: map[int]complex128{
+		Matrix: []map[int]complex128{
+			map[int]complex128{
 				0: 1,
 				1: 0,
 			},
-			1: map[int]complex128{
+			map[int]complex128{
 				0: 0,
 				1: 1,
 			},
