@@ -26,6 +26,38 @@ func (a Matrix64) String() string {
 	return output
 }
 
+// Zero adds a zero to the matrix
+func (a *Matrix64) Zero() {
+	zero := Matrix64{
+		R: 1,
+		C: 2,
+		Matrix: []complex64{
+			1, 0,
+		},
+	}
+	if a.C == 0 {
+		*a = zero
+		return
+	}
+	*a = *a.Tensor(&zero)
+}
+
+// One adds a one to the matrix
+func (a *Matrix64) One() {
+	one := Matrix64{
+		R: 1,
+		C: 2,
+		Matrix: []complex64{
+			0, 1,
+		},
+	}
+	if a.C == 0 {
+		*a = one
+		return
+	}
+	*a = *a.Tensor(&one)
+}
+
 // Tensor product is the tensor product
 func (a *Matrix64) Tensor(b *Matrix64) *Matrix64 {
 	output := make([]complex64, 0, len(a.Matrix)*len(b.Matrix))
@@ -161,6 +193,38 @@ func (a Matrix128) String() string {
 		output += fmt.Sprintf("\n")
 	}
 	return output
+}
+
+// Zero adds a zero to the matrix
+func (a *Matrix128) Zero() {
+	zero := Matrix128{
+		R: 1,
+		C: 2,
+		Matrix: []complex128{
+			1, 0,
+		},
+	}
+	if a.C == 0 {
+		*a = zero
+		return
+	}
+	*a = *a.Tensor(&zero)
+}
+
+// One adds a one to the matrix
+func (a *Matrix128) One() {
+	one := Matrix128{
+		R: 1,
+		C: 2,
+		Matrix: []complex128{
+			0, 1,
+		},
+	}
+	if a.C == 0 {
+		*a = one
+		return
+	}
+	*a = *a.Tensor(&one)
 }
 
 // Tensor product is the tensor product

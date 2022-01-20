@@ -31,6 +31,44 @@ func (a Sparse64) String() string {
 	return output
 }
 
+// Zero adds a zero to the matrix
+func (a *Sparse64) Zero() {
+	zero := Sparse64{
+		R: 1,
+		C: 2,
+		Matrix: []map[int]complex64{
+			map[int]complex64{
+				0: 1,
+				1: 0,
+			},
+		},
+	}
+	if a.C == 0 {
+		*a = zero
+		return
+	}
+	*a = *a.Tensor(&zero)
+}
+
+// One adds a one to the matrix
+func (a *Sparse64) One() {
+	one := Sparse64{
+		R: 1,
+		C: 2,
+		Matrix: []map[int]complex64{
+			map[int]complex64{
+				0: 0,
+				1: 1,
+			},
+		},
+	}
+	if a.C == 0 {
+		*a = one
+		return
+	}
+	*a = *a.Tensor(&one)
+}
+
 // Tensor product is the tensor product
 func (a *Sparse64) Tensor(b *Sparse64) *Sparse64 {
 	output := make([]map[int]complex64, a.R*b.R)
@@ -215,6 +253,44 @@ func (a Sparse128) String() string {
 		output += fmt.Sprintf("\n")
 	}
 	return output
+}
+
+// Zero adds a zero to the matrix
+func (a *Sparse128) Zero() {
+	zero := Sparse128{
+		R: 1,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: 1,
+				1: 0,
+			},
+		},
+	}
+	if a.C == 0 {
+		*a = zero
+		return
+	}
+	*a = *a.Tensor(&zero)
+}
+
+// One adds a one to the matrix
+func (a *Sparse128) One() {
+	one := Sparse128{
+		R: 1,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: 0,
+				1: 1,
+			},
+		},
+	}
+	if a.C == 0 {
+		*a = one
+		return
+	}
+	*a = *a.Tensor(&one)
 }
 
 // Tensor product is the tensor product
