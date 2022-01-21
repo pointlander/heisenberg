@@ -9,36 +9,56 @@ import (
 )
 
 func BenchmarkMatrix64(b *testing.B) {
+	state := Matrix64{}
+	for i := 0; i < 4; i++ {
+		state.One()
+		state.Zero()
+	}
 	for n := 0; n < b.N; n++ {
-		a := Matrix64{}.ControlledNot(8, []int{0}, 1)
-		b := Matrix64{}.ControlledNot(8, []int{0, 1}, 2)
+		a := state.ControlledNot([]int{0}, 1)
+		b := state.ControlledNot([]int{0, 1}, 2)
 		c := a.Multiply(b)
 		_ = c
 	}
 }
 
 func BenchmarkMatrix128(b *testing.B) {
+	state := Matrix128{}
+	for i := 0; i < 4; i++ {
+		state.One()
+		state.Zero()
+	}
 	for n := 0; n < b.N; n++ {
-		a := Matrix128{}.ControlledNot(8, []int{0}, 1)
-		b := Matrix128{}.ControlledNot(8, []int{0, 1}, 2)
+		a := state.ControlledNot([]int{0}, 1)
+		b := state.ControlledNot([]int{0, 1}, 2)
 		c := a.Multiply(b)
 		_ = c
 	}
 }
 
 func BenchmarkSparse64(b *testing.B) {
+	state := Sparse64{}
+	for i := 0; i < 4; i++ {
+		state.One()
+		state.Zero()
+	}
 	for n := 0; n < b.N; n++ {
-		a := Sparse64{}.ControlledNot(8, []int{0}, 1)
-		b := Sparse64{}.ControlledNot(8, []int{0, 1}, 2)
+		a := state.ControlledNot([]int{0}, 1)
+		b := state.ControlledNot([]int{0, 1}, 2)
 		c := a.Multiply(b)
 		_ = c
 	}
 }
 
 func BenchmarkSparse128(b *testing.B) {
+	state := Sparse128{}
+	for i := 0; i < 4; i++ {
+		state.One()
+		state.Zero()
+	}
 	for n := 0; n < b.N; n++ {
-		a := Sparse128{}.ControlledNot(8, []int{0}, 1)
-		b := Sparse128{}.ControlledNot(8, []int{0, 1}, 2)
+		a := state.ControlledNot([]int{0}, 1)
+		b := state.ControlledNot([]int{0, 1}, 2)
 		c := a.Multiply(b)
 		_ = c
 	}
@@ -139,12 +159,20 @@ func TestTensor128(t *testing.T) {
 }
 
 func TestMultiply64(t *testing.T) {
-	a := Matrix64{}.ControlledNot(8, []int{0}, 1)
-	b := Matrix64{}.ControlledNot(8, []int{0, 1}, 2)
+	stateMatrix := Matrix64{}
+	stateMatrix.One()
+	stateMatrix.Zero()
+	stateMatrix.Zero()
+	a := stateMatrix.ControlledNot([]int{0}, 1)
+	b := stateMatrix.ControlledNot([]int{0, 1}, 2)
 	c := a.Multiply(b)
 
-	d := Sparse64{}.ControlledNot(8, []int{0}, 1)
-	e := Sparse64{}.ControlledNot(8, []int{0, 1}, 2)
+	stateSparse := Sparse64{}
+	stateSparse.One()
+	stateSparse.Zero()
+	stateSparse.Zero()
+	d := stateSparse.ControlledNot([]int{0}, 1)
+	e := stateSparse.ControlledNot([]int{0, 1}, 2)
 	f := d.Multiply(e)
 
 	for i := 0; i < c.R; i += c.C {
@@ -162,12 +190,20 @@ func TestMultiply64(t *testing.T) {
 }
 
 func TestMultiply128(t *testing.T) {
-	a := Matrix128{}.ControlledNot(8, []int{0}, 1)
-	b := Matrix128{}.ControlledNot(8, []int{0, 1}, 2)
+	stateMatrix := Matrix128{}
+	stateMatrix.One()
+	stateMatrix.Zero()
+	stateMatrix.Zero()
+	a := stateMatrix.ControlledNot([]int{0}, 1)
+	b := stateMatrix.ControlledNot([]int{0, 1}, 2)
 	c := a.Multiply(b)
 
-	d := Sparse128{}.ControlledNot(8, []int{0}, 1)
-	e := Sparse128{}.ControlledNot(8, []int{0, 1}, 2)
+	stateSparse := Sparse128{}
+	stateSparse.One()
+	stateSparse.Zero()
+	stateSparse.Zero()
+	d := stateSparse.ControlledNot([]int{0}, 1)
+	e := stateSparse.ControlledNot([]int{0, 1}, 2)
 	f := d.Multiply(e)
 
 	for i := 0; i < c.R; i += c.C {

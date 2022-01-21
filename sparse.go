@@ -6,6 +6,7 @@ package main
 
 import (
 	"fmt"
+	"math/bits"
 	"strconv"
 )
 
@@ -170,7 +171,8 @@ func (a *Sparse64) Copy() *Sparse64 {
 }
 
 // ControlledNot controlled not gate
-func (Sparse64) ControlledNot(n int, c []int, t int) *Sparse64 {
+func (a *Sparse64) ControlledNot(c []int, t int) *Sparse64 {
+	n := 64 - bits.LeadingZeros64(uint64(a.R*a.C)-1)
 	p := &Sparse64{
 		R: 2,
 		C: 2,
@@ -394,7 +396,8 @@ func (a *Sparse128) Copy() *Sparse128 {
 }
 
 // ControlledNot controlled not gate
-func (Sparse128) ControlledNot(n int, c []int, t int) *Sparse128 {
+func (a *Sparse128) ControlledNot(c []int, t int) *Sparse128 {
+	n := 64 - bits.LeadingZeros64(uint64(a.R*a.C)-1)
 	p := &Sparse128{
 		R: 2,
 		C: 2,

@@ -6,6 +6,7 @@ package main
 
 import (
 	"fmt"
+	"math/bits"
 	"strconv"
 )
 
@@ -121,7 +122,8 @@ func (a *Matrix64) Copy() *Matrix64 {
 }
 
 // ControlledNot controlled not gate
-func (Matrix64) ControlledNot(n int, c []int, t int) *Matrix64 {
+func (a *Matrix64) ControlledNot(c []int, t int) *Matrix64 {
+	n := 64 - bits.LeadingZeros64(uint64(len(a.Matrix)-1))
 	p := &Matrix64{
 		R: 2,
 		C: 2,
@@ -290,7 +292,8 @@ func (a *Matrix128) Copy() *Matrix128 {
 }
 
 // ControlledNot controlled not gate
-func (Matrix128) ControlledNot(n int, c []int, t int) *Matrix128 {
+func (a *Matrix128) ControlledNot(c []int, t int) *Matrix128 {
+	n := 64 - bits.LeadingZeros64(uint64(len(a.Matrix)-1))
 	p := &Matrix128{
 		R: 2,
 		C: 2,

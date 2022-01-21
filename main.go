@@ -35,11 +35,18 @@ func main() {
 	fmt.Printf("%s", unitary)
 
 	fmt.Printf("\n")
-	a := Matrix64{}.ControlledNot(3, []int{0}, 2)
+	state := Matrix64{}
+	state.One()
+	state.One()
+	state.Zero()
+	fmt.Println(state)
+
+	fmt.Printf("\n")
+	a := state.ControlledNot([]int{0}, 2)
 	fmt.Printf("%s", a)
 
 	fmt.Printf("\n")
-	b := Matrix64{}.ControlledNot(3, []int{0, 1}, 2)
+	b := state.ControlledNot([]int{0, 1}, 2)
 	fmt.Printf("%s", b)
 
 	fmt.Printf("\n")
@@ -54,12 +61,6 @@ func main() {
 		sum += d.Matrix[i] - c.Matrix[i]
 	}
 	fmt.Println(sum)
-
-	state := Matrix64{}
-	state.One()
-	state.One()
-	state.Zero()
-	fmt.Println(state)
 
 	fmt.Printf("\n")
 	state.Transpose()
