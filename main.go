@@ -35,18 +35,18 @@ func main() {
 	fmt.Printf("%s", unitary)
 
 	fmt.Printf("\n")
-	state := Dense64{}
-	state.One()
-	state.One()
-	state.Zero()
-	fmt.Println(state)
+	machine := MachineDense64{}
+	machine.One()
+	machine.One()
+	machine.Zero()
+	fmt.Println(machine)
 
 	fmt.Printf("\n")
-	a := state.ControlledNot([]int{0}, 2)
+	a := machine.ControlledNot([]int{0}, 2)
 	fmt.Printf("%s", a)
 
 	fmt.Printf("\n")
-	b := state.ControlledNot([]int{0, 1}, 2)
+	b := machine.ControlledNot([]int{0, 1}, 2)
 	fmt.Printf("%s", b)
 
 	fmt.Printf("\n")
@@ -63,7 +63,5 @@ func main() {
 	fmt.Println(sum)
 
 	fmt.Printf("\n")
-	state.Transpose()
-	output := c.Multiply(&state)
-	fmt.Println(output)
+	fmt.Println(machine)
 }

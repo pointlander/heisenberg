@@ -6,7 +6,6 @@ package main
 
 import (
 	"fmt"
-	"math/bits"
 	"strconv"
 )
 
@@ -27,36 +26,44 @@ func (a Dense64) String() string {
 	return output
 }
 
+// MachineDense64 is a 64 bit dense matrix machine
+type MachineDense64 struct {
+	Dense64
+	Qubits int
+}
+
 // Zero adds a zero to the matrix
-func (a *Dense64) Zero() {
+func (a *MachineDense64) Zero() {
+	a.Qubits++
 	zero := Dense64{
-		R: 1,
-		C: 2,
+		R: 2,
+		C: 1,
 		Matrix: []complex64{
 			1, 0,
 		},
 	}
 	if a.C == 0 {
-		*a = zero
+		a.Dense64 = zero
 		return
 	}
-	*a = *a.Tensor(&zero)
+	a.Dense64 = *a.Tensor(&zero)
 }
 
 // One adds a one to the matrix
-func (a *Dense64) One() {
+func (a *MachineDense64) One() {
+	a.Qubits++
 	one := Dense64{
-		R: 1,
-		C: 2,
+		R: 2,
+		C: 1,
 		Matrix: []complex64{
 			0, 1,
 		},
 	}
 	if a.C == 0 {
-		*a = one
+		a.Dense64 = one
 		return
 	}
-	*a = *a.Tensor(&one)
+	a.Dense64 = *a.Tensor(&one)
 }
 
 // Tensor product is the tensor product
@@ -122,8 +129,8 @@ func (a *Dense64) Copy() *Dense64 {
 }
 
 // ControlledNot controlled not gate
-func (a *Dense64) ControlledNot(c []int, t int) *Dense64 {
-	n := 64 - bits.LeadingZeros64(uint64(len(a.Matrix)-1))
+func (a *MachineDense64) ControlledNot(c []int, t int) *Dense64 {
+	n := a.Qubits
 	p := &Dense64{
 		R: 2,
 		C: 2,
@@ -177,6 +184,8 @@ func (a *Dense64) ControlledNot(c []int, t int) *Dense64 {
 		copy(g.Matrix[i*g.C:(i+1)*g.C], q.Matrix[int(ii)*g.C:int(ii+1)*g.C])
 	}
 
+	a.Dense64 = *g.Multiply(&a.Dense64)
+
 	return &g
 }
 
@@ -197,36 +206,44 @@ func (a Dense128) String() string {
 	return output
 }
 
+// MachineDense128 is a 128 bit dense matrix machine
+type MachineDense128 struct {
+	Dense128
+	Qubits int
+}
+
 // Zero adds a zero to the matrix
-func (a *Dense128) Zero() {
+func (a *MachineDense128) Zero() {
+	a.Qubits++
 	zero := Dense128{
-		R: 1,
-		C: 2,
+		R: 2,
+		C: 1,
 		Matrix: []complex128{
 			1, 0,
 		},
 	}
 	if a.C == 0 {
-		*a = zero
+		a.Dense128 = zero
 		return
 	}
-	*a = *a.Tensor(&zero)
+	a.Dense128 = *a.Tensor(&zero)
 }
 
 // One adds a one to the matrix
-func (a *Dense128) One() {
+func (a *MachineDense128) One() {
+	a.Qubits++
 	one := Dense128{
-		R: 1,
-		C: 2,
+		R: 2,
+		C: 1,
 		Matrix: []complex128{
 			0, 1,
 		},
 	}
 	if a.C == 0 {
-		*a = one
+		a.Dense128 = one
 		return
 	}
-	*a = *a.Tensor(&one)
+	a.Dense128 = *a.Tensor(&one)
 }
 
 // Tensor product is the tensor product
@@ -292,8 +309,8 @@ func (a *Dense128) Copy() *Dense128 {
 }
 
 // ControlledNot controlled not gate
-func (a *Dense128) ControlledNot(c []int, t int) *Dense128 {
-	n := 64 - bits.LeadingZeros64(uint64(len(a.Matrix)-1))
+func (a *MachineDense128) ControlledNot(c []int, t int) *Dense128 {
+	n := a.Qubits
 	p := &Dense128{
 		R: 2,
 		C: 2,
@@ -346,6 +363,8 @@ func (a *Dense128) ControlledNot(c []int, t int) *Dense128 {
 	for i, ii := range index {
 		copy(g.Matrix[i*g.C:(i+1)*g.C], q.Matrix[int(ii)*g.C:int(ii+1)*g.C])
 	}
+
+	a.Dense128 = *g.Multiply(&a.Dense128)
 
 	return &g
 }

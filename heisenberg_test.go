@@ -9,58 +9,50 @@ import (
 )
 
 func BenchmarkDense64(b *testing.B) {
-	state := Dense64{}
-	for i := 0; i < 4; i++ {
-		state.One()
-		state.Zero()
-	}
 	for n := 0; n < b.N; n++ {
-		a := state.ControlledNot([]int{0}, 1)
-		b := state.ControlledNot([]int{0, 1}, 2)
-		c := a.Multiply(b)
-		_ = c
+		machine := MachineDense64{}
+		for i := 0; i < 4; i++ {
+			machine.One()
+			machine.Zero()
+		}
+		machine.ControlledNot([]int{0}, 1)
+		machine.ControlledNot([]int{0, 1}, 2)
 	}
 }
 
 func BenchmarkDense128(b *testing.B) {
-	state := Dense128{}
-	for i := 0; i < 4; i++ {
-		state.One()
-		state.Zero()
-	}
 	for n := 0; n < b.N; n++ {
-		a := state.ControlledNot([]int{0}, 1)
-		b := state.ControlledNot([]int{0, 1}, 2)
-		c := a.Multiply(b)
-		_ = c
+		machine := MachineDense128{}
+		for i := 0; i < 4; i++ {
+			machine.One()
+			machine.Zero()
+		}
+		machine.ControlledNot([]int{0}, 1)
+		machine.ControlledNot([]int{0, 1}, 2)
 	}
 }
 
 func BenchmarkSparse64(b *testing.B) {
-	state := Sparse64{}
-	for i := 0; i < 4; i++ {
-		state.One()
-		state.Zero()
-	}
 	for n := 0; n < b.N; n++ {
-		a := state.ControlledNot([]int{0}, 1)
-		b := state.ControlledNot([]int{0, 1}, 2)
-		c := a.Multiply(b)
-		_ = c
+		machine := MachineSparse64{}
+		for i := 0; i < 4; i++ {
+			machine.One()
+			machine.Zero()
+		}
+		machine.ControlledNot([]int{0}, 1)
+		machine.ControlledNot([]int{0, 1}, 2)
 	}
 }
 
 func BenchmarkSparse128(b *testing.B) {
-	state := Sparse128{}
-	for i := 0; i < 4; i++ {
-		state.One()
-		state.Zero()
-	}
 	for n := 0; n < b.N; n++ {
-		a := state.ControlledNot([]int{0}, 1)
-		b := state.ControlledNot([]int{0, 1}, 2)
-		c := a.Multiply(b)
-		_ = c
+		machine := MachineSparse128{}
+		for i := 0; i < 4; i++ {
+			machine.One()
+			machine.Zero()
+		}
+		machine.ControlledNot([]int{0}, 1)
+		machine.ControlledNot([]int{0, 1}, 2)
 	}
 }
 
@@ -159,62 +151,58 @@ func TestTensor128(t *testing.T) {
 }
 
 func TestMultiply64(t *testing.T) {
-	stateMatrix := Dense64{}
-	stateMatrix.One()
-	stateMatrix.Zero()
-	stateMatrix.Zero()
-	a := stateMatrix.ControlledNot([]int{0}, 1)
-	b := stateMatrix.ControlledNot([]int{0, 1}, 2)
-	c := a.Multiply(b)
+	machineDense := MachineDense64{}
+	machineDense.One()
+	machineDense.Zero()
+	machineDense.Zero()
+	machineDense.ControlledNot([]int{0}, 1)
+	machineDense.ControlledNot([]int{0, 1}, 2)
 
-	stateSparse := Sparse64{}
-	stateSparse.One()
-	stateSparse.Zero()
-	stateSparse.Zero()
-	d := stateSparse.ControlledNot([]int{0}, 1)
-	e := stateSparse.ControlledNot([]int{0, 1}, 2)
-	f := d.Multiply(e)
+	machineSparse := MachineSparse64{}
+	machineSparse.One()
+	machineSparse.Zero()
+	machineSparse.Zero()
+	machineSparse.ControlledNot([]int{0}, 1)
+	machineSparse.ControlledNot([]int{0, 1}, 2)
 
-	for i := 0; i < c.R; i += c.C {
-		a := f.Matrix[i]
-		for j := 0; j < c.C; j++ {
+	for i := 0; i < machineDense.R; i += machineDense.C {
+		a := machineSparse.Matrix[i]
+		for j := 0; j < machineDense.C; j++ {
 			var value complex64
 			if a != nil {
 				value = a[j]
 			}
-			if value != c.Matrix[i*c.C+j] {
-				t.Fatalf("%d %d %f != %f", i, j, value, c.Matrix[i*c.C+j])
+			if value != machineDense.Matrix[i*machineDense.C+j] {
+				t.Fatalf("%d %d %f != %f", i, j, value, machineDense.Matrix[i*machineDense.C+j])
 			}
 		}
 	}
 }
 
 func TestMultiply128(t *testing.T) {
-	stateMatrix := Dense128{}
-	stateMatrix.One()
-	stateMatrix.Zero()
-	stateMatrix.Zero()
-	a := stateMatrix.ControlledNot([]int{0}, 1)
-	b := stateMatrix.ControlledNot([]int{0, 1}, 2)
-	c := a.Multiply(b)
+	machineDense := MachineDense128{}
+	machineDense.One()
+	machineDense.Zero()
+	machineDense.Zero()
+	machineDense.ControlledNot([]int{0}, 1)
+	machineDense.ControlledNot([]int{0, 1}, 2)
 
-	stateSparse := Sparse128{}
-	stateSparse.One()
-	stateSparse.Zero()
-	stateSparse.Zero()
-	d := stateSparse.ControlledNot([]int{0}, 1)
-	e := stateSparse.ControlledNot([]int{0, 1}, 2)
-	f := d.Multiply(e)
+	machineSparse := MachineSparse128{}
+	machineSparse.One()
+	machineSparse.Zero()
+	machineSparse.Zero()
+	machineSparse.ControlledNot([]int{0}, 1)
+	machineSparse.ControlledNot([]int{0, 1}, 2)
 
-	for i := 0; i < c.R; i += c.C {
-		a := f.Matrix[i]
-		for j := 0; j < c.C; j++ {
+	for i := 0; i < machineDense.R; i += machineDense.C {
+		a := machineSparse.Matrix[i]
+		for j := 0; j < machineDense.C; j++ {
 			var value complex128
 			if a != nil {
 				value = a[j]
 			}
-			if value != c.Matrix[i*c.C+j] {
-				t.Fatalf("%d %d %f != %f", i, j, value, c.Matrix[i*c.C+j])
+			if value != machineDense.Matrix[i*machineDense.C+j] {
+				t.Fatalf("%d %d %f != %f", i, j, value, machineDense.Matrix[i*machineDense.C+j])
 			}
 		}
 	}

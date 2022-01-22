@@ -6,7 +6,6 @@ package main
 
 import (
 	"fmt"
-	"math/bits"
 	"strconv"
 )
 
@@ -32,42 +31,54 @@ func (a Sparse64) String() string {
 	return output
 }
 
+// MachineSparse64 is a 64 bit sparse matrix machine
+type MachineSparse64 struct {
+	Sparse64
+	Qubits int
+}
+
 // Zero adds a zero to the matrix
-func (a *Sparse64) Zero() {
+func (a *MachineSparse64) Zero() {
+	a.Qubits++
 	zero := Sparse64{
-		R: 1,
-		C: 2,
+		R: 2,
+		C: 1,
 		Matrix: []map[int]complex64{
 			map[int]complex64{
 				0: 1,
-				1: 0,
+			},
+			map[int]complex64{
+				0: 0,
 			},
 		},
 	}
 	if a.C == 0 {
-		*a = zero
+		a.Sparse64 = zero
 		return
 	}
-	*a = *a.Tensor(&zero)
+	a.Sparse64 = *a.Tensor(&zero)
 }
 
 // One adds a one to the matrix
-func (a *Sparse64) One() {
+func (a *MachineSparse64) One() {
+	a.Qubits++
 	one := Sparse64{
-		R: 1,
-		C: 2,
+		R: 2,
+		C: 1,
 		Matrix: []map[int]complex64{
 			map[int]complex64{
 				0: 0,
-				1: 1,
+			},
+			map[int]complex64{
+				0: 1,
 			},
 		},
 	}
 	if a.C == 0 {
-		*a = one
+		a.Sparse64 = one
 		return
 	}
-	*a = *a.Tensor(&one)
+	a.Sparse64 = *a.Tensor(&one)
 }
 
 // Tensor product is the tensor product
@@ -171,8 +182,8 @@ func (a *Sparse64) Copy() *Sparse64 {
 }
 
 // ControlledNot controlled not gate
-func (a *Sparse64) ControlledNot(c []int, t int) *Sparse64 {
-	n := 64 - bits.LeadingZeros64(uint64(a.R*a.C)-1)
+func (a *MachineSparse64) ControlledNot(c []int, t int) *Sparse64 {
+	n := a.Qubits
 	p := &Sparse64{
 		R: 2,
 		C: 2,
@@ -232,6 +243,8 @@ func (a *Sparse64) ControlledNot(c []int, t int) *Sparse64 {
 		g.Matrix[i] = q.Matrix[int(ii)]
 	}
 
+	a.Sparse64 = *g.Multiply(&a.Sparse64)
+
 	return &g
 }
 
@@ -257,42 +270,54 @@ func (a Sparse128) String() string {
 	return output
 }
 
+// MachineSparse128 is a 128 bit sparse matrix machine
+type MachineSparse128 struct {
+	Sparse128
+	Qubits int
+}
+
 // Zero adds a zero to the matrix
-func (a *Sparse128) Zero() {
+func (a *MachineSparse128) Zero() {
+	a.Qubits++
 	zero := Sparse128{
-		R: 1,
-		C: 2,
+		R: 2,
+		C: 1,
 		Matrix: []map[int]complex128{
 			map[int]complex128{
 				0: 1,
-				1: 0,
+			},
+			map[int]complex128{
+				0: 0,
 			},
 		},
 	}
 	if a.C == 0 {
-		*a = zero
+		a.Sparse128 = zero
 		return
 	}
-	*a = *a.Tensor(&zero)
+	a.Sparse128 = *a.Tensor(&zero)
 }
 
 // One adds a one to the matrix
-func (a *Sparse128) One() {
+func (a *MachineSparse128) One() {
+	a.Qubits++
 	one := Sparse128{
-		R: 1,
-		C: 2,
+		R: 2,
+		C: 1,
 		Matrix: []map[int]complex128{
 			map[int]complex128{
 				0: 0,
-				1: 1,
+			},
+			map[int]complex128{
+				0: 1,
 			},
 		},
 	}
 	if a.C == 0 {
-		*a = one
+		a.Sparse128 = one
 		return
 	}
-	*a = *a.Tensor(&one)
+	a.Sparse128 = *a.Tensor(&one)
 }
 
 // Tensor product is the tensor product
@@ -396,8 +421,8 @@ func (a *Sparse128) Copy() *Sparse128 {
 }
 
 // ControlledNot controlled not gate
-func (a *Sparse128) ControlledNot(c []int, t int) *Sparse128 {
-	n := 64 - bits.LeadingZeros64(uint64(a.R*a.C)-1)
+func (a *MachineSparse128) ControlledNot(c []int, t int) *Sparse128 {
+	n := a.Qubits
 	p := &Sparse128{
 		R: 2,
 		C: 2,
@@ -456,6 +481,8 @@ func (a *Sparse128) ControlledNot(c []int, t int) *Sparse128 {
 	for i, ii := range index {
 		g.Matrix[i] = q.Matrix[int(ii)]
 	}
+
+	a.Sparse128 = *g.Multiply(&a.Sparse128)
 
 	return &g
 }
