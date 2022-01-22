@@ -8,8 +8,8 @@ import (
 	"testing"
 )
 
-func BenchmarkMatrix64(b *testing.B) {
-	state := Matrix64{}
+func BenchmarkDense64(b *testing.B) {
+	state := Dense64{}
 	for i := 0; i < 4; i++ {
 		state.One()
 		state.Zero()
@@ -22,8 +22,8 @@ func BenchmarkMatrix64(b *testing.B) {
 	}
 }
 
-func BenchmarkMatrix128(b *testing.B) {
-	state := Matrix128{}
+func BenchmarkDense128(b *testing.B) {
+	state := Dense128{}
 	for i := 0; i < 4; i++ {
 		state.One()
 		state.Zero()
@@ -84,7 +84,7 @@ func TestTensor64(t *testing.T) {
 		q = p.Tensor(q)
 	}
 
-	m := &Matrix64{
+	m := &Dense64{
 		R: 2,
 		C: 2,
 		Matrix: []complex64{
@@ -131,7 +131,7 @@ func TestTensor128(t *testing.T) {
 		q = p.Tensor(q)
 	}
 
-	m := &Matrix128{
+	m := &Dense128{
 		R: 2,
 		C: 2,
 		Matrix: []complex128{
@@ -159,7 +159,7 @@ func TestTensor128(t *testing.T) {
 }
 
 func TestMultiply64(t *testing.T) {
-	stateMatrix := Matrix64{}
+	stateMatrix := Dense64{}
 	stateMatrix.One()
 	stateMatrix.Zero()
 	stateMatrix.Zero()
@@ -190,7 +190,7 @@ func TestMultiply64(t *testing.T) {
 }
 
 func TestMultiply128(t *testing.T) {
-	stateMatrix := Matrix128{}
+	stateMatrix := Dense128{}
 	stateMatrix.One()
 	stateMatrix.Zero()
 	stateMatrix.Zero()

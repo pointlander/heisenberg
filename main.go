@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	cnot := Matrix64{
+	cnot := Dense64{
 		R: 2,
 		C: 2,
 		Matrix: []complex64{
@@ -20,7 +20,7 @@ func main() {
 	unitary := cnot.Tensor(&cnot)
 	fmt.Printf("%s", unitary)
 
-	cnot = Matrix64{
+	cnot = Dense64{
 		R: 4,
 		C: 4,
 		Matrix: []complex64{
@@ -35,7 +35,7 @@ func main() {
 	fmt.Printf("%s", unitary)
 
 	fmt.Printf("\n")
-	state := Matrix64{}
+	state := Dense64{}
 	state.One()
 	state.One()
 	state.Zero()

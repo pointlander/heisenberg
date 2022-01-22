@@ -10,13 +10,13 @@ import (
 	"strconv"
 )
 
-// Matrix64 is an algebriac matrix
-type Matrix64 struct {
+// Dense64 is an algebriac matrix
+type Dense64 struct {
 	R, C   int
 	Matrix []complex64
 }
 
-func (a Matrix64) String() string {
+func (a Dense64) String() string {
 	output := ""
 	for i := 0; i < a.R; i++ {
 		for j := 0; j < a.C; j++ {
@@ -28,8 +28,8 @@ func (a Matrix64) String() string {
 }
 
 // Zero adds a zero to the matrix
-func (a *Matrix64) Zero() {
-	zero := Matrix64{
+func (a *Dense64) Zero() {
+	zero := Dense64{
 		R: 1,
 		C: 2,
 		Matrix: []complex64{
@@ -44,8 +44,8 @@ func (a *Matrix64) Zero() {
 }
 
 // One adds a one to the matrix
-func (a *Matrix64) One() {
-	one := Matrix64{
+func (a *Dense64) One() {
+	one := Dense64{
 		R: 1,
 		C: 2,
 		Matrix: []complex64{
@@ -60,7 +60,7 @@ func (a *Matrix64) One() {
 }
 
 // Tensor product is the tensor product
-func (a *Matrix64) Tensor(b *Matrix64) *Matrix64 {
+func (a *Dense64) Tensor(b *Dense64) *Dense64 {
 	output := make([]complex64, 0, len(a.Matrix)*len(b.Matrix))
 	for x := 0; x < a.R; x++ {
 		for y := 0; y < b.R; y++ {
@@ -71,7 +71,7 @@ func (a *Matrix64) Tensor(b *Matrix64) *Matrix64 {
 			}
 		}
 	}
-	return &Matrix64{
+	return &Dense64{
 		R:      a.R * b.R,
 		C:      a.C * b.C,
 		Matrix: output,
@@ -79,7 +79,7 @@ func (a *Matrix64) Tensor(b *Matrix64) *Matrix64 {
 }
 
 // Multiply multiplies to matricies
-func (a *Matrix64) Multiply(b *Matrix64) *Matrix64 {
+func (a *Dense64) Multiply(b *Dense64) *Dense64 {
 	if a.C != b.R {
 		panic("invalid dimensions")
 	}
@@ -93,7 +93,7 @@ func (a *Matrix64) Multiply(b *Matrix64) *Matrix64 {
 			output = append(output, sum)
 		}
 	}
-	return &Matrix64{
+	return &Dense64{
 		R:      a.R,
 		C:      b.C,
 		Matrix: output,
@@ -101,7 +101,7 @@ func (a *Matrix64) Multiply(b *Matrix64) *Matrix64 {
 }
 
 // Transpose transposes a matrix
-func (a *Matrix64) Transpose() {
+func (a *Dense64) Transpose() {
 	for i := 0; i < a.R; i++ {
 		for j := 0; j < a.C; j++ {
 			a.Matrix[j*a.R+i] = a.Matrix[i*a.C+j]
@@ -111,8 +111,8 @@ func (a *Matrix64) Transpose() {
 }
 
 // Copy copies a matrix`
-func (a *Matrix64) Copy() *Matrix64 {
-	cp := &Matrix64{
+func (a *Dense64) Copy() *Dense64 {
+	cp := &Dense64{
 		R:      a.R,
 		C:      a.C,
 		Matrix: make([]complex64, len(a.Matrix)),
@@ -122,9 +122,9 @@ func (a *Matrix64) Copy() *Matrix64 {
 }
 
 // ControlledNot controlled not gate
-func (a *Matrix64) ControlledNot(c []int, t int) *Matrix64 {
+func (a *Dense64) ControlledNot(c []int, t int) *Dense64 {
 	n := 64 - bits.LeadingZeros64(uint64(len(a.Matrix)-1))
-	p := &Matrix64{
+	p := &Dense64{
 		R: 2,
 		C: 2,
 		Matrix: []complex64{
@@ -168,7 +168,7 @@ func (a *Matrix64) ControlledNot(c []int, t int) *Matrix64 {
 		index = append(index, v)
 	}
 
-	g := Matrix64{
+	g := Dense64{
 		R:      q.R,
 		C:      q.C,
 		Matrix: make([]complex64, q.R*q.C),
@@ -180,13 +180,13 @@ func (a *Matrix64) ControlledNot(c []int, t int) *Matrix64 {
 	return &g
 }
 
-// Matrix128 is an algebriac matrix
-type Matrix128 struct {
+// Dense128 is an algebriac matrix
+type Dense128 struct {
 	R, C   int
 	Matrix []complex128
 }
 
-func (a Matrix128) String() string {
+func (a Dense128) String() string {
 	output := ""
 	for i := 0; i < a.R; i++ {
 		for j := 0; j < a.C; j++ {
@@ -198,8 +198,8 @@ func (a Matrix128) String() string {
 }
 
 // Zero adds a zero to the matrix
-func (a *Matrix128) Zero() {
-	zero := Matrix128{
+func (a *Dense128) Zero() {
+	zero := Dense128{
 		R: 1,
 		C: 2,
 		Matrix: []complex128{
@@ -214,8 +214,8 @@ func (a *Matrix128) Zero() {
 }
 
 // One adds a one to the matrix
-func (a *Matrix128) One() {
-	one := Matrix128{
+func (a *Dense128) One() {
+	one := Dense128{
 		R: 1,
 		C: 2,
 		Matrix: []complex128{
@@ -230,7 +230,7 @@ func (a *Matrix128) One() {
 }
 
 // Tensor product is the tensor product
-func (a *Matrix128) Tensor(b *Matrix128) *Matrix128 {
+func (a *Dense128) Tensor(b *Dense128) *Dense128 {
 	output := make([]complex128, 0, len(a.Matrix)*len(b.Matrix))
 	for x := 0; x < a.R; x++ {
 		for y := 0; y < b.R; y++ {
@@ -241,7 +241,7 @@ func (a *Matrix128) Tensor(b *Matrix128) *Matrix128 {
 			}
 		}
 	}
-	return &Matrix128{
+	return &Dense128{
 		R:      a.R * b.R,
 		C:      a.C * b.C,
 		Matrix: output,
@@ -249,7 +249,7 @@ func (a *Matrix128) Tensor(b *Matrix128) *Matrix128 {
 }
 
 // Multiply multiplies to matricies
-func (a *Matrix128) Multiply(b *Matrix128) *Matrix128 {
+func (a *Dense128) Multiply(b *Dense128) *Dense128 {
 	if a.C != b.R {
 		panic("invalid dimensions")
 	}
@@ -263,7 +263,7 @@ func (a *Matrix128) Multiply(b *Matrix128) *Matrix128 {
 			output = append(output, sum)
 		}
 	}
-	return &Matrix128{
+	return &Dense128{
 		R:      a.R,
 		C:      b.C,
 		Matrix: output,
@@ -271,7 +271,7 @@ func (a *Matrix128) Multiply(b *Matrix128) *Matrix128 {
 }
 
 // Transpose transposes a matrix
-func (a *Matrix128) Transpose() {
+func (a *Dense128) Transpose() {
 	for i := 0; i < a.R; i++ {
 		for j := 0; j < a.C; j++ {
 			a.Matrix[j*a.R+i] = a.Matrix[i*a.C+j]
@@ -281,8 +281,8 @@ func (a *Matrix128) Transpose() {
 }
 
 // Copy copies a matrix`
-func (a *Matrix128) Copy() *Matrix128 {
-	cp := &Matrix128{
+func (a *Dense128) Copy() *Dense128 {
+	cp := &Dense128{
 		R:      a.R,
 		C:      a.C,
 		Matrix: make([]complex128, len(a.Matrix)),
@@ -292,9 +292,9 @@ func (a *Matrix128) Copy() *Matrix128 {
 }
 
 // ControlledNot controlled not gate
-func (a *Matrix128) ControlledNot(c []int, t int) *Matrix128 {
+func (a *Dense128) ControlledNot(c []int, t int) *Dense128 {
 	n := 64 - bits.LeadingZeros64(uint64(len(a.Matrix)-1))
-	p := &Matrix128{
+	p := &Dense128{
 		R: 2,
 		C: 2,
 		Matrix: []complex128{
@@ -338,7 +338,7 @@ func (a *Matrix128) ControlledNot(c []int, t int) *Matrix128 {
 		index = append(index, v)
 	}
 
-	g := Matrix128{
+	g := Dense128{
 		R:      q.R,
 		C:      q.C,
 		Matrix: make([]complex128, q.R*q.C),
