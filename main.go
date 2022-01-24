@@ -8,6 +8,9 @@ import (
 	"fmt"
 )
 
+// Qubit is a qubit
+type Qubit uint64
+
 func main() {
 	cnot := Dense64{
 		R: 2,
@@ -42,11 +45,11 @@ func main() {
 	fmt.Println(machine)
 
 	fmt.Printf("\n")
-	a := machine.ControlledNot([]int{0}, 2)
+	a := machine.ControlledNot([]Qubit{0}, 2)
 	fmt.Printf("%s", a)
 
 	fmt.Printf("\n")
-	b := machine.ControlledNot([]int{0, 1}, 2)
+	b := machine.ControlledNot([]Qubit{0, 1}, 2)
 	fmt.Printf("%s", b)
 
 	fmt.Printf("\n")

@@ -33,7 +33,8 @@ type MachineDense64 struct {
 }
 
 // Zero adds a zero to the matrix
-func (a *MachineDense64) Zero() {
+func (a *MachineDense64) Zero() Qubit {
+	qubit := Qubit(a.Qubits)
 	a.Qubits++
 	zero := Dense64{
 		R: 2,
@@ -42,15 +43,17 @@ func (a *MachineDense64) Zero() {
 			1, 0,
 		},
 	}
-	if a.C == 0 {
+	if qubit == 0 {
 		a.Dense64 = zero
-		return
+		return qubit
 	}
 	a.Dense64 = *a.Tensor(&zero)
+	return qubit
 }
 
 // One adds a one to the matrix
-func (a *MachineDense64) One() {
+func (a *MachineDense64) One() Qubit {
+	qubit := Qubit(a.Qubits)
 	a.Qubits++
 	one := Dense64{
 		R: 2,
@@ -59,11 +62,12 @@ func (a *MachineDense64) One() {
 			0, 1,
 		},
 	}
-	if a.C == 0 {
+	if qubit == 0 {
 		a.Dense64 = one
-		return
+		return qubit
 	}
 	a.Dense64 = *a.Tensor(&one)
+	return qubit
 }
 
 // Tensor product is the tensor product
@@ -129,7 +133,7 @@ func (a *Dense64) Copy() *Dense64 {
 }
 
 // ControlledNot controlled not gate
-func (a *MachineDense64) ControlledNot(c []int, t int) *Dense64 {
+func (a *MachineDense64) ControlledNot(c []Qubit, t Qubit) *Dense64 {
 	n := a.Qubits
 	p := &Dense64{
 		R: 2,
@@ -213,7 +217,8 @@ type MachineDense128 struct {
 }
 
 // Zero adds a zero to the matrix
-func (a *MachineDense128) Zero() {
+func (a *MachineDense128) Zero() Qubit {
+	qubit := Qubit(a.Qubits)
 	a.Qubits++
 	zero := Dense128{
 		R: 2,
@@ -222,15 +227,17 @@ func (a *MachineDense128) Zero() {
 			1, 0,
 		},
 	}
-	if a.C == 0 {
+	if qubit == 0 {
 		a.Dense128 = zero
-		return
+		return qubit
 	}
 	a.Dense128 = *a.Tensor(&zero)
+	return qubit
 }
 
 // One adds a one to the matrix
-func (a *MachineDense128) One() {
+func (a *MachineDense128) One() Qubit {
+	qubit := Qubit(a.Qubits)
 	a.Qubits++
 	one := Dense128{
 		R: 2,
@@ -239,11 +246,12 @@ func (a *MachineDense128) One() {
 			0, 1,
 		},
 	}
-	if a.C == 0 {
+	if qubit == 0 {
 		a.Dense128 = one
-		return
+		return qubit
 	}
 	a.Dense128 = *a.Tensor(&one)
+	return qubit
 }
 
 // Tensor product is the tensor product
@@ -309,7 +317,7 @@ func (a *Dense128) Copy() *Dense128 {
 }
 
 // ControlledNot controlled not gate
-func (a *MachineDense128) ControlledNot(c []int, t int) *Dense128 {
+func (a *MachineDense128) ControlledNot(c []Qubit, t Qubit) *Dense128 {
 	n := a.Qubits
 	p := &Dense128{
 		R: 2,

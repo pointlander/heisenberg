@@ -38,7 +38,8 @@ type MachineSparse64 struct {
 }
 
 // Zero adds a zero to the matrix
-func (a *MachineSparse64) Zero() {
+func (a *MachineSparse64) Zero() Qubit {
+	qubit := Qubit(a.Qubits)
 	a.Qubits++
 	zero := Sparse64{
 		R: 2,
@@ -52,15 +53,17 @@ func (a *MachineSparse64) Zero() {
 			},
 		},
 	}
-	if a.C == 0 {
+	if qubit == 0 {
 		a.Sparse64 = zero
-		return
+		return qubit
 	}
 	a.Sparse64 = *a.Tensor(&zero)
+	return qubit
 }
 
 // One adds a one to the matrix
-func (a *MachineSparse64) One() {
+func (a *MachineSparse64) One() Qubit {
+	qubit := Qubit(a.Qubits)
 	a.Qubits++
 	one := Sparse64{
 		R: 2,
@@ -74,11 +77,12 @@ func (a *MachineSparse64) One() {
 			},
 		},
 	}
-	if a.C == 0 {
+	if qubit == 0 {
 		a.Sparse64 = one
-		return
+		return qubit
 	}
 	a.Sparse64 = *a.Tensor(&one)
+	return qubit
 }
 
 // Tensor product is the tensor product
@@ -182,7 +186,7 @@ func (a *Sparse64) Copy() *Sparse64 {
 }
 
 // ControlledNot controlled not gate
-func (a *MachineSparse64) ControlledNot(c []int, t int) *Sparse64 {
+func (a *MachineSparse64) ControlledNot(c []Qubit, t Qubit) *Sparse64 {
 	n := a.Qubits
 	p := &Sparse64{
 		R: 2,
@@ -277,7 +281,8 @@ type MachineSparse128 struct {
 }
 
 // Zero adds a zero to the matrix
-func (a *MachineSparse128) Zero() {
+func (a *MachineSparse128) Zero() Qubit {
+	qubit := Qubit(a.Qubits)
 	a.Qubits++
 	zero := Sparse128{
 		R: 2,
@@ -291,15 +296,17 @@ func (a *MachineSparse128) Zero() {
 			},
 		},
 	}
-	if a.C == 0 {
+	if qubit == 0 {
 		a.Sparse128 = zero
-		return
+		return qubit
 	}
 	a.Sparse128 = *a.Tensor(&zero)
+	return qubit
 }
 
 // One adds a one to the matrix
-func (a *MachineSparse128) One() {
+func (a *MachineSparse128) One() Qubit {
+	qubit := Qubit(a.Qubits)
 	a.Qubits++
 	one := Sparse128{
 		R: 2,
@@ -313,11 +320,12 @@ func (a *MachineSparse128) One() {
 			},
 		},
 	}
-	if a.C == 0 {
+	if qubit == 0 {
 		a.Sparse128 = one
-		return
+		return qubit
 	}
 	a.Sparse128 = *a.Tensor(&one)
+	return qubit
 }
 
 // Tensor product is the tensor product
@@ -421,7 +429,7 @@ func (a *Sparse128) Copy() *Sparse128 {
 }
 
 // ControlledNot controlled not gate
-func (a *MachineSparse128) ControlledNot(c []int, t int) *Sparse128 {
+func (a *MachineSparse128) ControlledNot(c []Qubit, t Qubit) *Sparse128 {
 	n := a.Qubits
 	p := &Sparse128{
 		R: 2,

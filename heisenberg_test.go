@@ -15,8 +15,8 @@ func BenchmarkDense64(b *testing.B) {
 			machine.One()
 			machine.Zero()
 		}
-		machine.ControlledNot([]int{0}, 1)
-		machine.ControlledNot([]int{0, 1}, 2)
+		machine.ControlledNot([]Qubit{0}, 1)
+		machine.ControlledNot([]Qubit{0, 1}, 2)
 	}
 }
 
@@ -27,8 +27,8 @@ func BenchmarkDense128(b *testing.B) {
 			machine.One()
 			machine.Zero()
 		}
-		machine.ControlledNot([]int{0}, 1)
-		machine.ControlledNot([]int{0, 1}, 2)
+		machine.ControlledNot([]Qubit{0}, 1)
+		machine.ControlledNot([]Qubit{0, 1}, 2)
 	}
 }
 
@@ -39,8 +39,8 @@ func BenchmarkSparse64(b *testing.B) {
 			machine.One()
 			machine.Zero()
 		}
-		machine.ControlledNot([]int{0}, 1)
-		machine.ControlledNot([]int{0, 1}, 2)
+		machine.ControlledNot([]Qubit{0}, 1)
+		machine.ControlledNot([]Qubit{0, 1}, 2)
 	}
 }
 
@@ -51,8 +51,8 @@ func BenchmarkSparse128(b *testing.B) {
 			machine.One()
 			machine.Zero()
 		}
-		machine.ControlledNot([]int{0}, 1)
-		machine.ControlledNot([]int{0, 1}, 2)
+		machine.ControlledNot([]Qubit{0}, 1)
+		machine.ControlledNot([]Qubit{0, 1}, 2)
 	}
 }
 
@@ -155,15 +155,15 @@ func TestMultiply64(t *testing.T) {
 	machineDense.One()
 	machineDense.Zero()
 	machineDense.Zero()
-	machineDense.ControlledNot([]int{0}, 1)
-	machineDense.ControlledNot([]int{0, 1}, 2)
+	machineDense.ControlledNot([]Qubit{0}, 1)
+	machineDense.ControlledNot([]Qubit{0, 1}, 2)
 
 	machineSparse := MachineSparse64{}
 	machineSparse.One()
 	machineSparse.Zero()
 	machineSparse.Zero()
-	machineSparse.ControlledNot([]int{0}, 1)
-	machineSparse.ControlledNot([]int{0, 1}, 2)
+	machineSparse.ControlledNot([]Qubit{0}, 1)
+	machineSparse.ControlledNot([]Qubit{0, 1}, 2)
 
 	for i := 0; i < machineDense.R; i += machineDense.C {
 		a := machineSparse.Matrix[i]
@@ -184,15 +184,15 @@ func TestMultiply128(t *testing.T) {
 	machineDense.One()
 	machineDense.Zero()
 	machineDense.Zero()
-	machineDense.ControlledNot([]int{0}, 1)
-	machineDense.ControlledNot([]int{0, 1}, 2)
+	machineDense.ControlledNot([]Qubit{0}, 1)
+	machineDense.ControlledNot([]Qubit{0, 1}, 2)
 
 	machineSparse := MachineSparse128{}
 	machineSparse.One()
 	machineSparse.Zero()
 	machineSparse.Zero()
-	machineSparse.ControlledNot([]int{0}, 1)
-	machineSparse.ControlledNot([]int{0, 1}, 2)
+	machineSparse.ControlledNot([]Qubit{0}, 1)
+	machineSparse.ControlledNot([]Qubit{0, 1}, 2)
 
 	for i := 0; i < machineDense.R; i += machineDense.C {
 		a := machineSparse.Matrix[i]
