@@ -6,7 +6,6 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 )
 
 // Sparse64 is an algebriac matrix
@@ -207,35 +206,29 @@ func (a *MachineSparse64) ControlledNot(c []Qubit, t Qubit) *Sparse64 {
 		q = p.Tensor(q)
 	}
 	d := q.R
-	f := fmt.Sprintf("%s%s%s", "%0", strconv.Itoa(n), "s")
 
 	index := make([]int64, 0)
 	for i := 0; i < d; i++ {
-		bits := []rune(fmt.Sprintf(f, strconv.FormatInt(int64(i), 2)))
+		bits := int64(i)
 
 		// Apply X
 		apply := true
 		for _, j := range c {
-			if bits[j] == '0' {
+			if (bits>>(Qubit(n-1)-j))&1 == 0 {
 				apply = false
 				break
 			}
 		}
 
 		if apply {
-			if bits[t] == '0' {
-				bits[t] = '1'
+			if (bits>>(Qubit(n-1)-t))&1 == 0 {
+				bits |= 1 << (Qubit(n-1) - t)
 			} else {
-				bits[t] = '0'
+				bits &= ^(1 << (Qubit(n-1) - t))
 			}
 		}
 
-		v, err := strconv.ParseInt(string(bits), 2, 0)
-		if err != nil {
-			panic(fmt.Sprintf("parse int: %v", err))
-		}
-
-		index = append(index, v)
+		index = append(index, bits)
 	}
 
 	g := Sparse64{
@@ -450,35 +443,29 @@ func (a *MachineSparse128) ControlledNot(c []Qubit, t Qubit) *Sparse128 {
 		q = p.Tensor(q)
 	}
 	d := q.R
-	f := fmt.Sprintf("%s%s%s", "%0", strconv.Itoa(n), "s")
 
 	index := make([]int64, 0)
 	for i := 0; i < d; i++ {
-		bits := []rune(fmt.Sprintf(f, strconv.FormatInt(int64(i), 2)))
+		bits := int64(i)
 
 		// Apply X
 		apply := true
 		for _, j := range c {
-			if bits[j] == '0' {
+			if (bits>>(Qubit(n-1)-j))&1 == 0 {
 				apply = false
 				break
 			}
 		}
 
 		if apply {
-			if bits[t] == '0' {
-				bits[t] = '1'
+			if (bits>>(Qubit(n-1)-t))&1 == 0 {
+				bits |= 1 << (Qubit(n-1) - t)
 			} else {
-				bits[t] = '0'
+				bits &= ^(1 << (Qubit(n-1) - t))
 			}
 		}
 
-		v, err := strconv.ParseInt(string(bits), 2, 0)
-		if err != nil {
-			panic(fmt.Sprintf("parse int: %v", err))
-		}
-
-		index = append(index, v)
+		index = append(index, bits)
 	}
 
 	g := Sparse128{
