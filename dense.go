@@ -239,6 +239,8 @@ func (a *MachineDense64) RX(theta float64, c ...Qubit) *Dense64 {
 		d = d.Tensor(identity)
 	}
 
+	a.Dense64 = *d.Multiply(&a.Dense64)
+
 	return d
 }
 
@@ -294,6 +296,8 @@ func (a *MachineDense64) RY(theta float64, c ...Qubit) *Dense64 {
 		d = d.Tensor(identity)
 	}
 
+	a.Dense64 = *d.Multiply(&a.Dense64)
+
 	return d
 }
 
@@ -348,6 +352,8 @@ func (a *MachineDense64) RZ(theta float64, c ...Qubit) *Dense64 {
 
 		d = d.Tensor(identity)
 	}
+
+	a.Dense64 = *d.Multiply(&a.Dense64)
 
 	return d
 }
@@ -582,6 +588,8 @@ func (a *MachineDense128) RX(theta float64, c ...Qubit) *Dense128 {
 		d = d.Tensor(identity)
 	}
 
+	a.Dense128 = *d.Multiply(&a.Dense128)
+
 	return d
 }
 
@@ -637,6 +645,8 @@ func (a *MachineDense128) RY(theta float64, c ...Qubit) *Dense128 {
 		d = d.Tensor(identity)
 	}
 
+	a.Dense128 = *d.Multiply(&a.Dense128)
+
 	return d
 }
 
@@ -691,6 +701,8 @@ func (a *MachineDense128) RZ(theta float64, c ...Qubit) *Dense128 {
 
 		d = d.Tensor(identity)
 	}
+
+	a.Dense128 = *d.Multiply(&a.Dense128)
 
 	return d
 }

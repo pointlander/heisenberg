@@ -322,6 +322,8 @@ func (a *MachineSparse64) RX(theta float64, c ...Qubit) *Sparse64 {
 		d = d.Tensor(identity)
 	}
 
+	a.Sparse64 = *d.Multiply(&a.Sparse64)
+
 	return d
 }
 
@@ -401,6 +403,8 @@ func (a *MachineSparse64) RY(theta float64, c ...Qubit) *Sparse64 {
 		d = d.Tensor(identity)
 	}
 
+	a.Sparse64 = *d.Multiply(&a.Sparse64)
+
 	return d
 }
 
@@ -479,6 +483,8 @@ func (a *MachineSparse64) RZ(theta float64, c ...Qubit) *Sparse64 {
 
 		d = d.Tensor(identity)
 	}
+
+	a.Sparse64 = *d.Multiply(&a.Sparse64)
 
 	return d
 }
@@ -796,6 +802,8 @@ func (a *MachineSparse128) RX(theta float64, c ...Qubit) *Sparse128 {
 		d = d.Tensor(identity)
 	}
 
+	a.Sparse128 = *d.Multiply(&a.Sparse128)
+
 	return d
 }
 
@@ -875,6 +883,8 @@ func (a *MachineSparse128) RY(theta float64, c ...Qubit) *Sparse128 {
 		d = d.Tensor(identity)
 	}
 
+	a.Sparse128 = *d.Multiply(&a.Sparse128)
+
 	return d
 }
 
@@ -953,6 +963,8 @@ func (a *MachineSparse128) RZ(theta float64, c ...Qubit) *Sparse128 {
 
 		d = d.Tensor(identity)
 	}
+
+	a.Sparse128 = *d.Multiply(&a.Sparse128)
 
 	return d
 }

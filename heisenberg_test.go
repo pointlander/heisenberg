@@ -5,8 +5,17 @@
 package main
 
 import (
+	"math"
 	"testing"
 )
+
+func round64(a complex64) complex64 {
+	return complex(float32(int(real(a)*32))/32, float32(int(imag(a)*32))/32)
+}
+
+func round128(a complex128) complex128 {
+	return complex(float64(int(real(a)*32))/32, float64(int(imag(a)*32))/32)
+}
 
 func BenchmarkDense64(b *testing.B) {
 	for n := 0; n < b.N; n++ {
@@ -205,5 +214,113 @@ func TestMultiply128(t *testing.T) {
 				t.Fatalf("%d %d %f != %f", i, j, value, machineDense.Matrix[i*machineDense.C+j])
 			}
 		}
+	}
+}
+
+func TestRXSparse64(t *testing.T) {
+	machine := MachineSparse64{}
+	qubit := machine.Zero()
+	machine.RX(4*math.Pi, qubit)
+	if round64(machine.Matrix[0][0]) != 1 && round64(machine.Matrix[0][1]) != 0 {
+		t.Fatal("invalid qubit value")
+	}
+}
+
+func TestRYSparse64(t *testing.T) {
+	machine := MachineSparse64{}
+	qubit := machine.Zero()
+	machine.RY(4*math.Pi, qubit)
+	if round64(machine.Matrix[0][0]) != 1 && round64(machine.Matrix[0][1]) != 0 {
+		t.Fatal("invalid qubit value")
+	}
+}
+
+func TestRZSparse64(t *testing.T) {
+	machine := MachineSparse64{}
+	qubit := machine.Zero()
+	machine.RZ(4*math.Pi, qubit)
+	if round64(machine.Matrix[0][0]) != 1 && round64(machine.Matrix[0][1]) != 0 {
+		t.Fatal("invalid qubit value")
+	}
+}
+
+func TestRXSparse128(t *testing.T) {
+	machine := MachineSparse128{}
+	qubit := machine.Zero()
+	machine.RX(4*math.Pi, qubit)
+	if round128(machine.Matrix[0][0]) != 1 && round128(machine.Matrix[0][1]) != 0 {
+		t.Fatal("invalid qubit value")
+	}
+}
+
+func TestRYSparse128(t *testing.T) {
+	machine := MachineSparse128{}
+	qubit := machine.Zero()
+	machine.RY(4*math.Pi, qubit)
+	if round128(machine.Matrix[0][0]) != 1 && round128(machine.Matrix[0][1]) != 0 {
+		t.Fatal("invalid qubit value")
+	}
+}
+
+func TestRZSparse128(t *testing.T) {
+	machine := MachineSparse128{}
+	qubit := machine.Zero()
+	machine.RZ(4*math.Pi, qubit)
+	if round128(machine.Matrix[0][0]) != 1 && round128(machine.Matrix[0][1]) != 0 {
+		t.Fatal("invalid qubit value")
+	}
+}
+
+func TestRXDense64(t *testing.T) {
+	machine := MachineDense64{}
+	qubit := machine.Zero()
+	machine.RX(4*math.Pi, qubit)
+	if round64(machine.Matrix[0]) != 1 && round64(machine.Matrix[1]) != 0 {
+		t.Fatal("invalid qubit value")
+	}
+}
+
+func TestRYDense64(t *testing.T) {
+	machine := MachineDense64{}
+	qubit := machine.Zero()
+	machine.RY(4*math.Pi, qubit)
+	if round64(machine.Matrix[0]) != 1 && round64(machine.Matrix[1]) != 0 {
+		t.Fatal("invalid qubit value")
+	}
+}
+
+func TestRZDense64(t *testing.T) {
+	machine := MachineDense64{}
+	qubit := machine.Zero()
+	machine.RZ(4*math.Pi, qubit)
+	if round64(machine.Matrix[0]) != 1 && round64(machine.Matrix[1]) != 0 {
+		t.Fatal("invalid qubit value")
+	}
+}
+
+func TestRXDense128(t *testing.T) {
+	machine := MachineDense128{}
+	qubit := machine.Zero()
+	machine.RX(4*math.Pi, qubit)
+	if round128(machine.Matrix[0]) != 1 && round128(machine.Matrix[1]) != 0 {
+		t.Fatal("invalid qubit value")
+	}
+}
+
+func TestRYDense128(t *testing.T) {
+	machine := MachineDense128{}
+	qubit := machine.Zero()
+	machine.RY(4*math.Pi, qubit)
+	if round128(machine.Matrix[0]) != 1 && round128(machine.Matrix[1]) != 0 {
+		t.Fatal("invalid qubit value")
+	}
+}
+
+func TestRZDense128(t *testing.T) {
+	machine := MachineDense128{}
+	qubit := machine.Zero()
+	machine.RZ(4*math.Pi, qubit)
+	if round128(machine.Matrix[0]) != 1 && round128(machine.Matrix[1]) != 0 {
+		t.Fatal("invalid qubit value")
 	}
 }
