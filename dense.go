@@ -221,7 +221,14 @@ func (a *MachineDense64) RX(theta float64, c ...Qubit) *Dense64 {
 		},
 	}
 	if indexes[0] {
-		d = p
+		d = &Dense64{
+			R: 2,
+			C: 2,
+			Matrix: []complex64{
+				complex64(cmplx.Cos(complex128(v))), -1i * complex64(cmplx.Sin(complex128(v))),
+				-1i * complex64(cmplx.Sin(complex128(v))), complex64(cmplx.Cos(complex128(v))),
+			},
+		}
 	}
 	for i := 1; i < a.Qubits; i++ {
 		if indexes[i] {
@@ -269,7 +276,14 @@ func (a *MachineDense64) RY(theta float64, c ...Qubit) *Dense64 {
 		},
 	}
 	if indexes[0] {
-		d = p
+		d = &Dense64{
+			R: 2,
+			C: 2,
+			Matrix: []complex64{
+				complex64(cmplx.Cos(complex128(v))), -1 * complex64(cmplx.Sin(complex128(v))),
+				complex64(cmplx.Sin(complex128(v))), complex64(cmplx.Cos(complex128(v))),
+			},
+		}
 	}
 	for i := 1; i < a.Qubits; i++ {
 		if indexes[i] {
@@ -317,7 +331,14 @@ func (a *MachineDense64) RZ(theta float64, c ...Qubit) *Dense64 {
 		},
 	}
 	if indexes[0] {
-		d = p
+		d = &Dense64{
+			R: 2,
+			C: 2,
+			Matrix: []complex64{
+				complex64(cmplx.Exp(-1 * complex128(v))), 0,
+				0, complex64(cmplx.Exp(complex128(v))),
+			},
+		}
 	}
 	for i := 1; i < a.Qubits; i++ {
 		if indexes[i] {
@@ -543,7 +564,14 @@ func (a *MachineDense128) RX(theta float64, c ...Qubit) *Dense128 {
 		},
 	}
 	if indexes[0] {
-		d = p
+		d = &Dense128{
+			R: 2,
+			C: 2,
+			Matrix: []complex128{
+				cmplx.Cos(v), -1i * cmplx.Sin(v),
+				-1i * cmplx.Sin(v), cmplx.Cos(v),
+			},
+		}
 	}
 	for i := 1; i < a.Qubits; i++ {
 		if indexes[i] {
@@ -591,7 +619,14 @@ func (a *MachineDense128) RY(theta float64, c ...Qubit) *Dense128 {
 		},
 	}
 	if indexes[0] {
-		d = p
+		d = &Dense128{
+			R: 2,
+			C: 2,
+			Matrix: []complex128{
+				cmplx.Cos(v), -1 * cmplx.Sin(v),
+				cmplx.Sin(v), cmplx.Cos(v),
+			},
+		}
 	}
 	for i := 1; i < a.Qubits; i++ {
 		if indexes[i] {
@@ -639,7 +674,14 @@ func (a *MachineDense128) RZ(theta float64, c ...Qubit) *Dense128 {
 		},
 	}
 	if indexes[0] {
-		d = p
+		d = &Dense128{
+			R: 2,
+			C: 2,
+			Matrix: []complex128{
+				cmplx.Exp(-1 * v), 0,
+				0, cmplx.Exp(v),
+			},
+		}
 	}
 	for i := 1; i < a.Qubits; i++ {
 		if indexes[i] {

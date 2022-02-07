@@ -298,7 +298,20 @@ func (a *MachineSparse64) RX(theta float64, c ...Qubit) *Sparse64 {
 		},
 	}
 	if indexes[0] {
-		d = p
+		d = &Sparse64{
+			R: 2,
+			C: 2,
+			Matrix: []map[int]complex64{
+				map[int]complex64{
+					0: complex64(cmplx.Cos(complex128(v))),
+					1: -1i * complex64(cmplx.Sin(complex128(v))),
+				},
+				map[int]complex64{
+					0: -1i * complex64(cmplx.Sin(complex128(v))),
+					1: complex64(cmplx.Cos(complex128(v))),
+				},
+			},
+		}
 	}
 	for i := 1; i < a.Qubits; i++ {
 		if indexes[i] {
@@ -364,7 +377,20 @@ func (a *MachineSparse64) RY(theta float64, c ...Qubit) *Sparse64 {
 		},
 	}
 	if indexes[0] {
-		d = p
+		d = &Sparse64{
+			R: 2,
+			C: 2,
+			Matrix: []map[int]complex64{
+				map[int]complex64{
+					0: complex64(cmplx.Cos(complex128(v))),
+					1: -1 * complex64(cmplx.Sin(complex128(v))),
+				},
+				map[int]complex64{
+					0: complex64(cmplx.Sin(complex128(v))),
+					1: complex64(cmplx.Cos(complex128(v))),
+				},
+			},
+		}
 	}
 	for i := 1; i < a.Qubits; i++ {
 		if indexes[i] {
@@ -430,7 +456,20 @@ func (a *MachineSparse64) RZ(theta float64, c ...Qubit) *Sparse64 {
 		},
 	}
 	if indexes[0] {
-		d = p
+		d = &Sparse64{
+			R: 2,
+			C: 2,
+			Matrix: []map[int]complex64{
+				map[int]complex64{
+					0: complex64(cmplx.Exp(-1 * complex128(v))),
+					1: 0,
+				},
+				map[int]complex64{
+					0: 0,
+					1: complex64(cmplx.Exp(complex128(v))),
+				},
+			},
+		}
 	}
 	for i := 1; i < a.Qubits; i++ {
 		if indexes[i] {
@@ -733,7 +772,20 @@ func (a *MachineSparse128) RX(theta float64, c ...Qubit) *Sparse128 {
 		},
 	}
 	if indexes[0] {
-		d = p
+		d = &Sparse128{
+			R: 2,
+			C: 2,
+			Matrix: []map[int]complex128{
+				map[int]complex128{
+					0: cmplx.Cos(v),
+					1: -1i * cmplx.Sin(v),
+				},
+				map[int]complex128{
+					0: -1i * cmplx.Sin(v),
+					1: cmplx.Cos(v),
+				},
+			},
+		}
 	}
 	for i := 1; i < a.Qubits; i++ {
 		if indexes[i] {
@@ -799,7 +851,20 @@ func (a *MachineSparse128) RY(theta float64, c ...Qubit) *Sparse128 {
 		},
 	}
 	if indexes[0] {
-		d = p
+		d = &Sparse128{
+			R: 2,
+			C: 2,
+			Matrix: []map[int]complex128{
+				map[int]complex128{
+					0: cmplx.Cos(v),
+					1: -1 * cmplx.Sin(v),
+				},
+				map[int]complex128{
+					0: cmplx.Sin(v),
+					1: cmplx.Cos(v),
+				},
+			},
+		}
 	}
 	for i := 1; i < a.Qubits; i++ {
 		if indexes[i] {
@@ -865,7 +930,20 @@ func (a *MachineSparse128) RZ(theta float64, c ...Qubit) *Sparse128 {
 		},
 	}
 	if indexes[0] {
-		d = p
+		d = &Sparse128{
+			R: 2,
+			C: 2,
+			Matrix: []map[int]complex128{
+				map[int]complex128{
+					0: cmplx.Exp(-1 * v),
+					1: 0,
+				},
+				map[int]complex128{
+					0: 0,
+					1: cmplx.Exp(v),
+				},
+			},
+		}
 	}
 	for i := 1; i < a.Qubits; i++ {
 		if indexes[i] {
