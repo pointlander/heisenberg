@@ -6,6 +6,7 @@ package main
 
 import (
 	"fmt"
+	"math/cmplx"
 )
 
 // Dense64 is an algebriac matrix
@@ -186,6 +187,150 @@ func (a *MachineDense64) ControlledNot(c []Qubit, t Qubit) *Dense64 {
 	return &g
 }
 
+// RX rotate X gate
+func (a *MachineDense64) RX(theta float64, c ...Qubit) *Dense64 {
+	v := complex(theta/2, 0)
+	p := &Dense64{
+		R: 2,
+		C: 2,
+		Matrix: []complex64{
+			complex64(cmplx.Cos(complex128(v))), -1i * complex64(cmplx.Sin(complex128(v))),
+			-1i * complex64(cmplx.Sin(complex128(v))), complex64(cmplx.Cos(complex128(v))),
+		},
+	}
+
+	indexes := make(map[int]bool)
+	for _, value := range c {
+		indexes[int(value)] = true
+	}
+
+	identity := &Dense64{
+		R: 2,
+		C: 2,
+		Matrix: []complex64{
+			1, 0,
+			0, 1,
+		},
+	}
+	d := &Dense64{
+		R: 2,
+		C: 2,
+		Matrix: []complex64{
+			1, 0,
+			0, 1,
+		},
+	}
+	if indexes[0] {
+		d = p
+	}
+	for i := 1; i < a.Qubits; i++ {
+		if indexes[i] {
+			d = d.Tensor(p)
+			continue
+		}
+
+		d = d.Tensor(identity)
+	}
+
+	return d
+}
+
+// RY rotate Y gate
+func (a *MachineDense64) RY(theta float64, c ...Qubit) *Dense64 {
+	v := complex(theta/2, 0)
+	p := &Dense64{
+		R: 2,
+		C: 2,
+		Matrix: []complex64{
+			complex64(cmplx.Cos(complex128(v))), -1 * complex64(cmplx.Sin(complex128(v))),
+			complex64(cmplx.Sin(complex128(v))), complex64(cmplx.Cos(complex128(v))),
+		},
+	}
+
+	indexes := make(map[int]bool)
+	for _, value := range c {
+		indexes[int(value)] = true
+	}
+
+	identity := &Dense64{
+		R: 2,
+		C: 2,
+		Matrix: []complex64{
+			1, 0,
+			0, 1,
+		},
+	}
+	d := &Dense64{
+		R: 2,
+		C: 2,
+		Matrix: []complex64{
+			1, 0,
+			0, 1,
+		},
+	}
+	if indexes[0] {
+		d = p
+	}
+	for i := 1; i < a.Qubits; i++ {
+		if indexes[i] {
+			d = d.Tensor(p)
+			continue
+		}
+
+		d = d.Tensor(identity)
+	}
+
+	return d
+}
+
+// RZ rotate Z gate
+func (a *MachineDense64) RZ(theta float64, c ...Qubit) *Dense64 {
+	v := complex(theta/2, 0)
+	p := &Dense64{
+		R: 2,
+		C: 2,
+		Matrix: []complex64{
+			complex64(cmplx.Exp(-1 * complex128(v))), 0,
+			0, complex64(cmplx.Exp(complex128(v))),
+		},
+	}
+
+	indexes := make(map[int]bool)
+	for _, value := range c {
+		indexes[int(value)] = true
+	}
+
+	identity := &Dense64{
+		R: 2,
+		C: 2,
+		Matrix: []complex64{
+			1, 0,
+			0, 1,
+		},
+	}
+	d := &Dense64{
+		R: 2,
+		C: 2,
+		Matrix: []complex64{
+			1, 0,
+			0, 1,
+		},
+	}
+	if indexes[0] {
+		d = p
+	}
+	for i := 1; i < a.Qubits; i++ {
+		if indexes[i] {
+			d = d.Tensor(p)
+			continue
+		}
+
+		d = d.Tensor(identity)
+	}
+
+	return d
+}
+
 // Dense128 is an algebriac matrix
 type Dense128 struct {
 	R, C   int
@@ -362,4 +507,148 @@ func (a *MachineDense128) ControlledNot(c []Qubit, t Qubit) *Dense128 {
 	a.Dense128 = *g.Multiply(&a.Dense128)
 
 	return &g
+}
+
+// RX rotate X gate
+func (a *MachineDense128) RX(theta float64, c ...Qubit) *Dense128 {
+	v := complex(theta/2, 0)
+	p := &Dense128{
+		R: 2,
+		C: 2,
+		Matrix: []complex128{
+			cmplx.Cos(v), -1i * cmplx.Sin(v),
+			-1i * cmplx.Sin(v), cmplx.Cos(v),
+		},
+	}
+
+	indexes := make(map[int]bool)
+	for _, value := range c {
+		indexes[int(value)] = true
+	}
+
+	identity := &Dense128{
+		R: 2,
+		C: 2,
+		Matrix: []complex128{
+			1, 0,
+			0, 1,
+		},
+	}
+	d := &Dense128{
+		R: 2,
+		C: 2,
+		Matrix: []complex128{
+			1, 0,
+			0, 1,
+		},
+	}
+	if indexes[0] {
+		d = p
+	}
+	for i := 1; i < a.Qubits; i++ {
+		if indexes[i] {
+			d = d.Tensor(p)
+			continue
+		}
+
+		d = d.Tensor(identity)
+	}
+
+	return d
+}
+
+// RY rotate Y gate
+func (a *MachineDense128) RY(theta float64, c ...Qubit) *Dense128 {
+	v := complex(theta/2, 0)
+	p := &Dense128{
+		R: 2,
+		C: 2,
+		Matrix: []complex128{
+			cmplx.Cos(v), -1 * cmplx.Sin(v),
+			cmplx.Sin(v), cmplx.Cos(v),
+		},
+	}
+
+	indexes := make(map[int]bool)
+	for _, value := range c {
+		indexes[int(value)] = true
+	}
+
+	identity := &Dense128{
+		R: 2,
+		C: 2,
+		Matrix: []complex128{
+			1, 0,
+			0, 1,
+		},
+	}
+	d := &Dense128{
+		R: 2,
+		C: 2,
+		Matrix: []complex128{
+			1, 0,
+			0, 1,
+		},
+	}
+	if indexes[0] {
+		d = p
+	}
+	for i := 1; i < a.Qubits; i++ {
+		if indexes[i] {
+			d = d.Tensor(p)
+			continue
+		}
+
+		d = d.Tensor(identity)
+	}
+
+	return d
+}
+
+// RZ rotate Z gate
+func (a *MachineDense128) RZ(theta float64, c ...Qubit) *Dense128 {
+	v := complex(theta/2, 0)
+	p := &Dense128{
+		R: 2,
+		C: 2,
+		Matrix: []complex128{
+			cmplx.Exp(-1 * v), 0,
+			0, cmplx.Exp(v),
+		},
+	}
+
+	indexes := make(map[int]bool)
+	for _, value := range c {
+		indexes[int(value)] = true
+	}
+
+	identity := &Dense128{
+		R: 2,
+		C: 2,
+		Matrix: []complex128{
+			1, 0,
+			0, 1,
+		},
+	}
+	d := &Dense128{
+		R: 2,
+		C: 2,
+		Matrix: []complex128{
+			1, 0,
+			0, 1,
+		},
+	}
+	if indexes[0] {
+		d = p
+	}
+	for i := 1; i < a.Qubits; i++ {
+		if indexes[i] {
+			d = d.Tensor(p)
+			continue
+		}
+
+		d = d.Tensor(identity)
+	}
+
+	return d
 }

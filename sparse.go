@@ -6,6 +6,7 @@ package main
 
 import (
 	"fmt"
+	"math/cmplx"
 )
 
 // Sparse64 is an algebriac matrix
@@ -245,6 +246,204 @@ func (a *MachineSparse64) ControlledNot(c []Qubit, t Qubit) *Sparse64 {
 	return &g
 }
 
+// RX rotate X gate
+func (a *MachineSparse64) RX(theta float64, c ...Qubit) *Sparse64 {
+	v := complex(theta/2, 0)
+	p := &Sparse64{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex64{
+			map[int]complex64{
+				0: complex64(cmplx.Cos(complex128(v))),
+				1: -1i * complex64(cmplx.Sin(complex128(v))),
+			},
+			map[int]complex64{
+				0: -1i * complex64(cmplx.Sin(complex128(v))),
+				1: complex64(cmplx.Cos(complex128(v))),
+			},
+		},
+	}
+
+	indexes := make(map[int]bool)
+	for _, value := range c {
+		indexes[int(value)] = true
+	}
+
+	identity := &Sparse64{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex64{
+			map[int]complex64{
+				0: 1,
+				1: 0,
+			},
+			map[int]complex64{
+				0: 0,
+				1: 1,
+			},
+		},
+	}
+	d := &Sparse64{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex64{
+			map[int]complex64{
+				0: 1,
+				1: 0,
+			},
+			map[int]complex64{
+				0: 0,
+				1: 1,
+			},
+		},
+	}
+	if indexes[0] {
+		d = p
+	}
+	for i := 1; i < a.Qubits; i++ {
+		if indexes[i] {
+			d = d.Tensor(p)
+			continue
+		}
+
+		d = d.Tensor(identity)
+	}
+
+	return d
+}
+
+// RY rotate Y gate
+func (a *MachineSparse64) RY(theta float64, c ...Qubit) *Sparse64 {
+	v := complex(theta/2, 0)
+	p := &Sparse64{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex64{
+			map[int]complex64{
+				0: complex64(cmplx.Cos(complex128(v))),
+				1: -1 * complex64(cmplx.Sin(complex128(v))),
+			},
+			map[int]complex64{
+				0: complex64(cmplx.Sin(complex128(v))),
+				1: complex64(cmplx.Cos(complex128(v))),
+			},
+		},
+	}
+
+	indexes := make(map[int]bool)
+	for _, value := range c {
+		indexes[int(value)] = true
+	}
+
+	identity := &Sparse64{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex64{
+			map[int]complex64{
+				0: 1,
+				1: 0,
+			},
+			map[int]complex64{
+				0: 0,
+				1: 1,
+			},
+		},
+	}
+	d := &Sparse64{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex64{
+			map[int]complex64{
+				0: 1,
+				1: 0,
+			},
+			map[int]complex64{
+				0: 0,
+				1: 1,
+			},
+		},
+	}
+	if indexes[0] {
+		d = p
+	}
+	for i := 1; i < a.Qubits; i++ {
+		if indexes[i] {
+			d = d.Tensor(p)
+			continue
+		}
+
+		d = d.Tensor(identity)
+	}
+
+	return d
+}
+
+// RZ rotate Z gate
+func (a *MachineSparse64) RZ(theta float64, c ...Qubit) *Sparse64 {
+	v := complex(theta/2, 0)
+	p := &Sparse64{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex64{
+			map[int]complex64{
+				0: complex64(cmplx.Exp(-1 * complex128(v))),
+				1: 0,
+			},
+			map[int]complex64{
+				0: 0,
+				1: complex64(cmplx.Exp(complex128(v))),
+			},
+		},
+	}
+
+	indexes := make(map[int]bool)
+	for _, value := range c {
+		indexes[int(value)] = true
+	}
+
+	identity := &Sparse64{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex64{
+			map[int]complex64{
+				0: 1,
+				1: 0,
+			},
+			map[int]complex64{
+				0: 0,
+				1: 1,
+			},
+		},
+	}
+	d := &Sparse64{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex64{
+			map[int]complex64{
+				0: 1,
+				1: 0,
+			},
+			map[int]complex64{
+				0: 0,
+				1: 1,
+			},
+		},
+	}
+	if indexes[0] {
+		d = p
+	}
+	for i := 1; i < a.Qubits; i++ {
+		if indexes[i] {
+			d = d.Tensor(p)
+			continue
+		}
+
+		d = d.Tensor(identity)
+	}
+
+	return d
+}
+
 // Sparse128 is an algebriac matrix
 type Sparse128 struct {
 	R, C   int
@@ -480,4 +679,202 @@ func (a *MachineSparse128) ControlledNot(c []Qubit, t Qubit) *Sparse128 {
 	a.Sparse128 = *g.Multiply(&a.Sparse128)
 
 	return &g
+}
+
+// RX rotate X gate
+func (a *MachineSparse128) RX(theta float64, c ...Qubit) *Sparse128 {
+	v := complex(theta/2, 0)
+	p := &Sparse128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: cmplx.Cos(v),
+				1: -1i * cmplx.Sin(v),
+			},
+			map[int]complex128{
+				0: -1i * cmplx.Sin(v),
+				1: cmplx.Cos(v),
+			},
+		},
+	}
+
+	indexes := make(map[int]bool)
+	for _, value := range c {
+		indexes[int(value)] = true
+	}
+
+	identity := &Sparse128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: 1,
+				1: 0,
+			},
+			map[int]complex128{
+				0: 0,
+				1: 1,
+			},
+		},
+	}
+	d := &Sparse128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: 1,
+				1: 0,
+			},
+			map[int]complex128{
+				0: 0,
+				1: 1,
+			},
+		},
+	}
+	if indexes[0] {
+		d = p
+	}
+	for i := 1; i < a.Qubits; i++ {
+		if indexes[i] {
+			d = d.Tensor(p)
+			continue
+		}
+
+		d = d.Tensor(identity)
+	}
+
+	return d
+}
+
+// RY rotate Y gate
+func (a *MachineSparse128) RY(theta float64, c ...Qubit) *Sparse128 {
+	v := complex(theta/2, 0)
+	p := &Sparse128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: cmplx.Cos(v),
+				1: -1 * cmplx.Sin(v),
+			},
+			map[int]complex128{
+				0: cmplx.Sin(v),
+				1: cmplx.Cos(v),
+			},
+		},
+	}
+
+	indexes := make(map[int]bool)
+	for _, value := range c {
+		indexes[int(value)] = true
+	}
+
+	identity := &Sparse128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: 1,
+				1: 0,
+			},
+			map[int]complex128{
+				0: 0,
+				1: 1,
+			},
+		},
+	}
+	d := &Sparse128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: 1,
+				1: 0,
+			},
+			map[int]complex128{
+				0: 0,
+				1: 1,
+			},
+		},
+	}
+	if indexes[0] {
+		d = p
+	}
+	for i := 1; i < a.Qubits; i++ {
+		if indexes[i] {
+			d = d.Tensor(p)
+			continue
+		}
+
+		d = d.Tensor(identity)
+	}
+
+	return d
+}
+
+// RZ rotate Z gate
+func (a *MachineSparse128) RZ(theta float64, c ...Qubit) *Sparse128 {
+	v := complex(theta/2, 0)
+	p := &Sparse128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: cmplx.Exp(-1 * v),
+				1: 0,
+			},
+			map[int]complex128{
+				0: 0,
+				1: cmplx.Exp(v),
+			},
+		},
+	}
+
+	indexes := make(map[int]bool)
+	for _, value := range c {
+		indexes[int(value)] = true
+	}
+
+	identity := &Sparse128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: 1,
+				1: 0,
+			},
+			map[int]complex128{
+				0: 0,
+				1: 1,
+			},
+		},
+	}
+	d := &Sparse128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: 1,
+				1: 0,
+			},
+			map[int]complex128{
+				0: 0,
+				1: 1,
+			},
+		},
+	}
+	if indexes[0] {
+		d = p
+	}
+	for i := 1; i < a.Qubits; i++ {
+		if indexes[i] {
+			d = d.Tensor(p)
+			continue
+		}
+
+		d = d.Tensor(identity)
+	}
+
+	return d
 }
