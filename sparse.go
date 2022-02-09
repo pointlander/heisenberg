@@ -246,24 +246,8 @@ func (a *MachineSparse64) ControlledNot(c []Qubit, t Qubit) *Sparse64 {
 	return &g
 }
 
-// RX rotate X gate
-func (a *MachineSparse64) RX(theta float64, c ...Qubit) *Sparse64 {
-	v := complex(theta/2, 0)
-	p := &Sparse64{
-		R: 2,
-		C: 2,
-		Matrix: []map[int]complex64{
-			map[int]complex64{
-				0: complex64(cmplx.Cos(complex128(v))),
-				1: -1i * complex64(cmplx.Sin(complex128(v))),
-			},
-			map[int]complex64{
-				0: -1i * complex64(cmplx.Sin(complex128(v))),
-				1: complex64(cmplx.Cos(complex128(v))),
-			},
-		},
-	}
-
+// Multiply multiplies the machine by a matrix
+func (a *MachineSparse64) Multiply(b *Sparse64, c ...Qubit) {
 	indexes := make(map[int]bool)
 	for _, value := range c {
 		indexes[int(value)] = true
@@ -298,24 +282,11 @@ func (a *MachineSparse64) RX(theta float64, c ...Qubit) *Sparse64 {
 		},
 	}
 	if indexes[0] {
-		d = &Sparse64{
-			R: 2,
-			C: 2,
-			Matrix: []map[int]complex64{
-				map[int]complex64{
-					0: complex64(cmplx.Cos(complex128(v))),
-					1: -1i * complex64(cmplx.Sin(complex128(v))),
-				},
-				map[int]complex64{
-					0: -1i * complex64(cmplx.Sin(complex128(v))),
-					1: complex64(cmplx.Cos(complex128(v))),
-				},
-			},
-		}
+		d = b.Copy()
 	}
 	for i := 1; i < a.Qubits; i++ {
 		if indexes[i] {
-			d = d.Tensor(p)
+			d = d.Tensor(b)
 			continue
 		}
 
@@ -323,170 +294,78 @@ func (a *MachineSparse64) RX(theta float64, c ...Qubit) *Sparse64 {
 	}
 
 	a.Sparse64 = *d.Multiply(&a.Sparse64)
+}
 
-	return d
+// RXSparse64 x rotation matrix
+func RXSparse64(theta complex128) *Sparse64 {
+	return &Sparse64{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex64{
+			map[int]complex64{
+				0: complex64(cmplx.Cos(complex128(theta))),
+				1: -1i * complex64(cmplx.Sin(complex128(theta))),
+			},
+			map[int]complex64{
+				0: -1i * complex64(cmplx.Sin(complex128(theta))),
+				1: complex64(cmplx.Cos(complex128(theta))),
+			},
+		},
+	}
+}
+
+// RX rotate X gate
+func (a *MachineSparse64) RX(theta float64, c ...Qubit) *MachineSparse64 {
+	a.Multiply(RXSparse64(complex(theta/2, 0)), c...)
+	return a
+}
+
+// RYSparse64 y rotation matrix
+func RYSparse64(theta complex128) *Sparse64 {
+	return &Sparse64{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex64{
+			map[int]complex64{
+				0: complex64(cmplx.Cos(complex128(theta))),
+				1: -1 * complex64(cmplx.Sin(complex128(theta))),
+			},
+			map[int]complex64{
+				0: complex64(cmplx.Sin(complex128(theta))),
+				1: complex64(cmplx.Cos(complex128(theta))),
+			},
+		},
+	}
 }
 
 // RY rotate Y gate
-func (a *MachineSparse64) RY(theta float64, c ...Qubit) *Sparse64 {
-	v := complex(theta/2, 0)
-	p := &Sparse64{
+func (a *MachineSparse64) RY(theta float64, c ...Qubit) *MachineSparse64 {
+	a.Multiply(RYSparse64(complex(theta/2, 0)), c...)
+	return a
+}
+
+// RZSparse64 z rotation matrix
+func RZSparse64(theta complex128) *Sparse64 {
+	return &Sparse64{
 		R: 2,
 		C: 2,
 		Matrix: []map[int]complex64{
 			map[int]complex64{
-				0: complex64(cmplx.Cos(complex128(v))),
-				1: -1 * complex64(cmplx.Sin(complex128(v))),
-			},
-			map[int]complex64{
-				0: complex64(cmplx.Sin(complex128(v))),
-				1: complex64(cmplx.Cos(complex128(v))),
-			},
-		},
-	}
-
-	indexes := make(map[int]bool)
-	for _, value := range c {
-		indexes[int(value)] = true
-	}
-
-	identity := &Sparse64{
-		R: 2,
-		C: 2,
-		Matrix: []map[int]complex64{
-			map[int]complex64{
-				0: 1,
+				0: complex64(cmplx.Exp(-1 * complex128(theta))),
 				1: 0,
 			},
 			map[int]complex64{
 				0: 0,
-				1: 1,
+				1: complex64(cmplx.Exp(complex128(theta))),
 			},
 		},
 	}
-	d := &Sparse64{
-		R: 2,
-		C: 2,
-		Matrix: []map[int]complex64{
-			map[int]complex64{
-				0: 1,
-				1: 0,
-			},
-			map[int]complex64{
-				0: 0,
-				1: 1,
-			},
-		},
-	}
-	if indexes[0] {
-		d = &Sparse64{
-			R: 2,
-			C: 2,
-			Matrix: []map[int]complex64{
-				map[int]complex64{
-					0: complex64(cmplx.Cos(complex128(v))),
-					1: -1 * complex64(cmplx.Sin(complex128(v))),
-				},
-				map[int]complex64{
-					0: complex64(cmplx.Sin(complex128(v))),
-					1: complex64(cmplx.Cos(complex128(v))),
-				},
-			},
-		}
-	}
-	for i := 1; i < a.Qubits; i++ {
-		if indexes[i] {
-			d = d.Tensor(p)
-			continue
-		}
-
-		d = d.Tensor(identity)
-	}
-
-	a.Sparse64 = *d.Multiply(&a.Sparse64)
-
-	return d
 }
 
 // RZ rotate Z gate
-func (a *MachineSparse64) RZ(theta float64, c ...Qubit) *Sparse64 {
-	v := complex(theta/2, 0)
-	p := &Sparse64{
-		R: 2,
-		C: 2,
-		Matrix: []map[int]complex64{
-			map[int]complex64{
-				0: complex64(cmplx.Exp(-1 * complex128(v))),
-				1: 0,
-			},
-			map[int]complex64{
-				0: 0,
-				1: complex64(cmplx.Exp(complex128(v))),
-			},
-		},
-	}
-
-	indexes := make(map[int]bool)
-	for _, value := range c {
-		indexes[int(value)] = true
-	}
-
-	identity := &Sparse64{
-		R: 2,
-		C: 2,
-		Matrix: []map[int]complex64{
-			map[int]complex64{
-				0: 1,
-				1: 0,
-			},
-			map[int]complex64{
-				0: 0,
-				1: 1,
-			},
-		},
-	}
-	d := &Sparse64{
-		R: 2,
-		C: 2,
-		Matrix: []map[int]complex64{
-			map[int]complex64{
-				0: 1,
-				1: 0,
-			},
-			map[int]complex64{
-				0: 0,
-				1: 1,
-			},
-		},
-	}
-	if indexes[0] {
-		d = &Sparse64{
-			R: 2,
-			C: 2,
-			Matrix: []map[int]complex64{
-				map[int]complex64{
-					0: complex64(cmplx.Exp(-1 * complex128(v))),
-					1: 0,
-				},
-				map[int]complex64{
-					0: 0,
-					1: complex64(cmplx.Exp(complex128(v))),
-				},
-			},
-		}
-	}
-	for i := 1; i < a.Qubits; i++ {
-		if indexes[i] {
-			d = d.Tensor(p)
-			continue
-		}
-
-		d = d.Tensor(identity)
-	}
-
-	a.Sparse64 = *d.Multiply(&a.Sparse64)
-
-	return d
+func (a *MachineSparse64) RZ(theta float64, c ...Qubit) *MachineSparse64 {
+	a.Multiply(RZSparse64(complex(theta/2, 0)), c...)
+	return a
 }
 
 // Sparse128 is an algebriac matrix
@@ -726,24 +605,8 @@ func (a *MachineSparse128) ControlledNot(c []Qubit, t Qubit) *Sparse128 {
 	return &g
 }
 
-// RX rotate X gate
-func (a *MachineSparse128) RX(theta float64, c ...Qubit) *Sparse128 {
-	v := complex(theta/2, 0)
-	p := &Sparse128{
-		R: 2,
-		C: 2,
-		Matrix: []map[int]complex128{
-			map[int]complex128{
-				0: cmplx.Cos(v),
-				1: -1i * cmplx.Sin(v),
-			},
-			map[int]complex128{
-				0: -1i * cmplx.Sin(v),
-				1: cmplx.Cos(v),
-			},
-		},
-	}
-
+// Multiply multiplies the machine by a matrix
+func (a *MachineSparse128) Multiply(b *Sparse128, c ...Qubit) {
 	indexes := make(map[int]bool)
 	for _, value := range c {
 		indexes[int(value)] = true
@@ -778,24 +641,11 @@ func (a *MachineSparse128) RX(theta float64, c ...Qubit) *Sparse128 {
 		},
 	}
 	if indexes[0] {
-		d = &Sparse128{
-			R: 2,
-			C: 2,
-			Matrix: []map[int]complex128{
-				map[int]complex128{
-					0: cmplx.Cos(v),
-					1: -1i * cmplx.Sin(v),
-				},
-				map[int]complex128{
-					0: -1i * cmplx.Sin(v),
-					1: cmplx.Cos(v),
-				},
-			},
-		}
+		d = b.Copy()
 	}
 	for i := 1; i < a.Qubits; i++ {
 		if indexes[i] {
-			d = d.Tensor(p)
+			d = d.Tensor(b)
 			continue
 		}
 
@@ -803,168 +653,76 @@ func (a *MachineSparse128) RX(theta float64, c ...Qubit) *Sparse128 {
 	}
 
 	a.Sparse128 = *d.Multiply(&a.Sparse128)
+}
 
-	return d
+// RXSparse128 x rotation matrix
+func RXSparse128(theta complex128) *Sparse128 {
+	return &Sparse128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: cmplx.Cos(theta),
+				1: -1i * cmplx.Sin(theta),
+			},
+			map[int]complex128{
+				0: -1i * cmplx.Sin(theta),
+				1: cmplx.Cos(theta),
+			},
+		},
+	}
+}
+
+// RX rotate X gate
+func (a *MachineSparse128) RX(theta float64, c ...Qubit) *MachineSparse128 {
+	a.Multiply(RXSparse128(complex(theta/2, 0)), c...)
+	return a
+}
+
+// RYSparse128 y rotation matrix
+func RYSparse128(theta complex128) *Sparse128 {
+	return &Sparse128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: cmplx.Cos(theta),
+				1: -1 * cmplx.Sin(theta),
+			},
+			map[int]complex128{
+				0: cmplx.Sin(theta),
+				1: cmplx.Cos(theta),
+			},
+		},
+	}
 }
 
 // RY rotate Y gate
-func (a *MachineSparse128) RY(theta float64, c ...Qubit) *Sparse128 {
-	v := complex(theta/2, 0)
-	p := &Sparse128{
+func (a *MachineSparse128) RY(theta float64, c ...Qubit) *MachineSparse128 {
+	a.Multiply(RYSparse128(complex(theta/2, 0)), c...)
+	return a
+}
+
+// RZSparse128 z rotation matrix
+func RZSparse128(theta complex128) *Sparse128 {
+	return &Sparse128{
 		R: 2,
 		C: 2,
 		Matrix: []map[int]complex128{
 			map[int]complex128{
-				0: cmplx.Cos(v),
-				1: -1 * cmplx.Sin(v),
-			},
-			map[int]complex128{
-				0: cmplx.Sin(v),
-				1: cmplx.Cos(v),
-			},
-		},
-	}
-
-	indexes := make(map[int]bool)
-	for _, value := range c {
-		indexes[int(value)] = true
-	}
-
-	identity := &Sparse128{
-		R: 2,
-		C: 2,
-		Matrix: []map[int]complex128{
-			map[int]complex128{
-				0: 1,
+				0: cmplx.Exp(-1 * theta),
 				1: 0,
 			},
 			map[int]complex128{
 				0: 0,
-				1: 1,
+				1: cmplx.Exp(theta),
 			},
 		},
 	}
-	d := &Sparse128{
-		R: 2,
-		C: 2,
-		Matrix: []map[int]complex128{
-			map[int]complex128{
-				0: 1,
-				1: 0,
-			},
-			map[int]complex128{
-				0: 0,
-				1: 1,
-			},
-		},
-	}
-	if indexes[0] {
-		d = &Sparse128{
-			R: 2,
-			C: 2,
-			Matrix: []map[int]complex128{
-				map[int]complex128{
-					0: cmplx.Cos(v),
-					1: -1 * cmplx.Sin(v),
-				},
-				map[int]complex128{
-					0: cmplx.Sin(v),
-					1: cmplx.Cos(v),
-				},
-			},
-		}
-	}
-	for i := 1; i < a.Qubits; i++ {
-		if indexes[i] {
-			d = d.Tensor(p)
-			continue
-		}
-
-		d = d.Tensor(identity)
-	}
-
-	a.Sparse128 = *d.Multiply(&a.Sparse128)
-
-	return d
 }
 
 // RZ rotate Z gate
-func (a *MachineSparse128) RZ(theta float64, c ...Qubit) *Sparse128 {
-	v := complex(theta/2, 0)
-	p := &Sparse128{
-		R: 2,
-		C: 2,
-		Matrix: []map[int]complex128{
-			map[int]complex128{
-				0: cmplx.Exp(-1 * v),
-				1: 0,
-			},
-			map[int]complex128{
-				0: 0,
-				1: cmplx.Exp(v),
-			},
-		},
-	}
-
-	indexes := make(map[int]bool)
-	for _, value := range c {
-		indexes[int(value)] = true
-	}
-
-	identity := &Sparse128{
-		R: 2,
-		C: 2,
-		Matrix: []map[int]complex128{
-			map[int]complex128{
-				0: 1,
-				1: 0,
-			},
-			map[int]complex128{
-				0: 0,
-				1: 1,
-			},
-		},
-	}
-	d := &Sparse128{
-		R: 2,
-		C: 2,
-		Matrix: []map[int]complex128{
-			map[int]complex128{
-				0: 1,
-				1: 0,
-			},
-			map[int]complex128{
-				0: 0,
-				1: 1,
-			},
-		},
-	}
-	if indexes[0] {
-		d = &Sparse128{
-			R: 2,
-			C: 2,
-			Matrix: []map[int]complex128{
-				map[int]complex128{
-					0: cmplx.Exp(-1 * v),
-					1: 0,
-				},
-				map[int]complex128{
-					0: 0,
-					1: cmplx.Exp(v),
-				},
-			},
-		}
-	}
-	for i := 1; i < a.Qubits; i++ {
-		if indexes[i] {
-			d = d.Tensor(p)
-			continue
-		}
-
-		d = d.Tensor(identity)
-	}
-
-	a.Sparse128 = *d.Multiply(&a.Sparse128)
-
-	return d
+func (a *MachineSparse128) RZ(theta float64, c ...Qubit) *MachineSparse128 {
+	a.Multiply(RZSparse128(complex(theta/2, 0)), c...)
+	return a
 }
