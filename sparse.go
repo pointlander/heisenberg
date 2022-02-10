@@ -320,6 +320,78 @@ func (a *MachineSparse64) H(qubits ...Qubit) *MachineSparse64 {
 	return a
 }
 
+// XSparse64 Pauli X matrix
+func XSparse64() *Sparse64 {
+	return &Sparse64{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex64{
+			map[int]complex64{
+				0: 0,
+				1: 1,
+			},
+			map[int]complex64{
+				0: 1,
+				1: 0,
+			},
+		},
+	}
+}
+
+// X multiply by Pauli X matrix
+func (a *MachineSparse64) X(qubits ...Qubit) *MachineSparse64 {
+	a.Multiply(XSparse64(), qubits...)
+	return a
+}
+
+// YSparse64 Pauli Y matrix
+func YSparse64() *Sparse64 {
+	return &Sparse64{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex64{
+			map[int]complex64{
+				0: 0,
+				1: -1i,
+			},
+			map[int]complex64{
+				0: 1i,
+				1: 0,
+			},
+		},
+	}
+}
+
+// Y multiply by Pauli Y matrix
+func (a *MachineSparse64) Y(qubits ...Qubit) *MachineSparse64 {
+	a.Multiply(YSparse64(), qubits...)
+	return a
+}
+
+// ZSparse64 Pauli Z matrix
+func ZSparse64() *Sparse64 {
+	return &Sparse64{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex64{
+			map[int]complex64{
+				0: 1,
+				1: 0,
+			},
+			map[int]complex64{
+				0: 0,
+				1: -1,
+			},
+		},
+	}
+}
+
+// Z multiply by Pauli Z matrix
+func (a *MachineSparse64) Z(qubits ...Qubit) *MachineSparse64 {
+	a.Multiply(ZSparse64(), qubits...)
+	return a
+}
+
 // RXSparse64 x rotation matrix
 func RXSparse64(theta complex128) *Sparse64 {
 	return &Sparse64{
@@ -699,6 +771,78 @@ func HSparse128() *Sparse128 {
 // H multiply by Hadamard gate
 func (a *MachineSparse128) H(qubits ...Qubit) *MachineSparse128 {
 	a.Multiply(HSparse128(), qubits...)
+	return a
+}
+
+// XSparse128 Pauli X matrix
+func XSparse128() *Sparse128 {
+	return &Sparse128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: 0,
+				1: 1,
+			},
+			map[int]complex128{
+				0: 1,
+				1: 0,
+			},
+		},
+	}
+}
+
+// X multiply by Pauli X matrix
+func (a *MachineSparse128) X(qubits ...Qubit) *MachineSparse128 {
+	a.Multiply(XSparse128(), qubits...)
+	return a
+}
+
+// YSparse128 Pauli Y matrix
+func YSparse128() *Sparse128 {
+	return &Sparse128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: 0,
+				1: -1i,
+			},
+			map[int]complex128{
+				0: 1i,
+				1: 0,
+			},
+		},
+	}
+}
+
+// Y multiply by Pauli Y matrix
+func (a *MachineSparse128) Y(qubits ...Qubit) *MachineSparse128 {
+	a.Multiply(YSparse128(), qubits...)
+	return a
+}
+
+// ZSparse64 Pauli Z matrix
+func ZSparse128() *Sparse128 {
+	return &Sparse128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: 1,
+				1: 0,
+			},
+			map[int]complex128{
+				0: 0,
+				1: -1,
+			},
+		},
+	}
+}
+
+// Z multiply by Pauli Z matrix
+func (a *MachineSparse128) Z(qubits ...Qubit) *MachineSparse128 {
+	a.Multiply(ZSparse128(), qubits...)
 	return a
 }
 

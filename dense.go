@@ -249,6 +249,60 @@ func (a *MachineDense64) H(qubits ...Qubit) *MachineDense64 {
 	return a
 }
 
+// XDense64 Pauli X matrix
+func XDense64() *Dense64 {
+	return &Dense64{
+		R: 2,
+		C: 2,
+		Matrix: []complex64{
+			0, 1,
+			1, 0,
+		},
+	}
+}
+
+// X multiply by Pauli X matrix
+func (a *MachineDense64) X(qubits ...Qubit) *MachineDense64 {
+	a.Multiply(XDense64(), qubits...)
+	return a
+}
+
+// YDense64 Pauli Y matrix
+func YDense64() *Dense64 {
+	return &Dense64{
+		R: 2,
+		C: 2,
+		Matrix: []complex64{
+			0, -1i,
+			1i, 0,
+		},
+	}
+}
+
+// Y multiply by Pauli Y matrix
+func (a *MachineDense64) Y(qubits ...Qubit) *MachineDense64 {
+	a.Multiply(YDense64(), qubits...)
+	return a
+}
+
+// ZDense64 Pauli Z matrix
+func ZDense64() *Dense64 {
+	return &Dense64{
+		R: 2,
+		C: 2,
+		Matrix: []complex64{
+			1, 0,
+			0, -1,
+		},
+	}
+}
+
+// Z multiply by Pauli Z matrix
+func (a *MachineDense64) Z(qubits ...Qubit) *MachineDense64 {
+	a.Multiply(ZDense64(), qubits...)
+	return a
+}
+
 // RXDense64 x rotation matrix
 func RXDense64(theta complex128) *Dense64 {
 	return &Dense64{
@@ -539,6 +593,60 @@ func HDense128() *Dense128 {
 // H multiply by Hadamard gate
 func (a *MachineDense128) H(qubits ...Qubit) *MachineDense128 {
 	a.Multiply(HDense128(), qubits...)
+	return a
+}
+
+// XDense128 Pauli X matrix
+func XDense128() *Dense128 {
+	return &Dense128{
+		R: 2,
+		C: 2,
+		Matrix: []complex128{
+			0, 1,
+			1, 0,
+		},
+	}
+}
+
+// X multiply by Pauli X matrix
+func (a *MachineDense128) X(qubits ...Qubit) *MachineDense128 {
+	a.Multiply(XDense128(), qubits...)
+	return a
+}
+
+// YDense128 Pauli Y matrix
+func YDense128() *Dense128 {
+	return &Dense128{
+		R: 2,
+		C: 2,
+		Matrix: []complex128{
+			0, -1i,
+			1i, 0,
+		},
+	}
+}
+
+// Y multiply by Pauli Y matrix
+func (a *MachineDense128) Y(qubits ...Qubit) *MachineDense128 {
+	a.Multiply(YDense128(), qubits...)
+	return a
+}
+
+// ZDense128 Pauli Z matrix
+func ZDense128() *Dense128 {
+	return &Dense128{
+		R: 2,
+		C: 2,
+		Matrix: []complex128{
+			1, 0,
+			0, -1,
+		},
+	}
+}
+
+// Z multiply by Pauli Z matrix
+func (a *MachineDense128) Z(qubits ...Qubit) *MachineDense128 {
+	a.Multiply(ZDense128(), qubits...)
 	return a
 }
 
