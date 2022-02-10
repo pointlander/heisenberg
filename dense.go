@@ -6,6 +6,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"math/cmplx"
 )
 
@@ -226,6 +227,25 @@ func IDense64() *Dense64 {
 // I multiply by identity
 func (a *MachineDense64) I(qubits ...Qubit) *MachineDense64 {
 	a.Multiply(IDense64(), qubits...)
+	return a
+}
+
+// HDense64 Hadamard matrix
+func HDense64() *Dense64 {
+	v := complex(1/math.Sqrt2, 0)
+	return &Dense64{
+		R: 2,
+		C: 2,
+		Matrix: []complex64{
+			complex64(v), complex64(v),
+			complex64(v), complex64(-v),
+		},
+	}
+}
+
+// H multiply by Hadamard gate
+func (a *MachineDense64) H(qubits ...Qubit) *MachineDense64 {
+	a.Multiply(HDense64(), qubits...)
 	return a
 }
 
@@ -500,6 +520,25 @@ func IDense128() *Dense128 {
 // I multiply by identity
 func (a *MachineDense128) I(qubits ...Qubit) *MachineDense128 {
 	a.Multiply(IDense128(), qubits...)
+	return a
+}
+
+// HDense128 Hadamard matrix
+func HDense128() *Dense128 {
+	v := complex(1/math.Sqrt2, 0)
+	return &Dense128{
+		R: 2,
+		C: 2,
+		Matrix: []complex128{
+			v, v,
+			v, -v,
+		},
+	}
+}
+
+// H multiply by Hadamard gate
+func (a *MachineDense128) H(qubits ...Qubit) *MachineDense128 {
+	a.Multiply(HDense128(), qubits...)
 	return a
 }
 

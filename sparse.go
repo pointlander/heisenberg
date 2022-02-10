@@ -6,6 +6,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"math/cmplx"
 )
 
@@ -291,6 +292,31 @@ func ISparse64() *Sparse64 {
 // I multiply by identity
 func (a *MachineSparse64) I(qubits ...Qubit) *MachineSparse64 {
 	a.Multiply(ISparse64(), qubits...)
+	return a
+}
+
+// HSparse64 Hadamard matrix
+func HSparse64() *Sparse64 {
+	v := complex(1/math.Sqrt2, 0)
+	return &Sparse64{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex64{
+			map[int]complex64{
+				0: complex64(v),
+				1: complex64(v),
+			},
+			map[int]complex64{
+				0: complex64(v),
+				1: complex64(-v),
+			},
+		},
+	}
+}
+
+// H multiply by Hadamard gate
+func (a *MachineSparse64) H(qubits ...Qubit) *MachineSparse64 {
+	a.Multiply(HSparse64(), qubits...)
 	return a
 }
 
@@ -648,6 +674,31 @@ func ISparse128() *Sparse128 {
 // I multiply by identity
 func (a *MachineSparse128) I(qubits ...Qubit) *MachineSparse128 {
 	a.Multiply(ISparse128(), qubits...)
+	return a
+}
+
+// HSparse128 Hadamard matrix
+func HSparse128() *Sparse128 {
+	v := complex(1/math.Sqrt2, 0)
+	return &Sparse128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: v,
+				1: v,
+			},
+			map[int]complex128{
+				0: v,
+				1: -v,
+			},
+		},
+	}
+}
+
+// H multiply by Hadamard gate
+func (a *MachineSparse128) H(qubits ...Qubit) *MachineSparse128 {
+	a.Multiply(HSparse128(), qubits...)
 	return a
 }
 
