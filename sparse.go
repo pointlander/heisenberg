@@ -478,10 +478,8 @@ func RZSparse64(theta complex128) *Sparse64 {
 		Matrix: []map[int]complex64{
 			map[int]complex64{
 				0: complex64(cmplx.Exp(-1 * complex128(theta))),
-				1: 0,
 			},
 			map[int]complex64{
-				0: 0,
 				1: complex64(cmplx.Exp(complex128(theta))),
 			},
 		},
