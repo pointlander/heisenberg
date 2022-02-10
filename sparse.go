@@ -247,40 +247,14 @@ func (a *MachineSparse64) ControlledNot(c []Qubit, t Qubit) *Sparse64 {
 }
 
 // Multiply multiplies the machine by a matrix
-func (a *MachineSparse64) Multiply(b *Sparse64, c ...Qubit) {
+func (a *MachineSparse64) Multiply(b *Sparse64, qubits ...Qubit) {
 	indexes := make(map[int]bool)
-	for _, value := range c {
+	for _, value := range qubits {
 		indexes[int(value)] = true
 	}
 
-	identity := &Sparse64{
-		R: 2,
-		C: 2,
-		Matrix: []map[int]complex64{
-			map[int]complex64{
-				0: 1,
-				1: 0,
-			},
-			map[int]complex64{
-				0: 0,
-				1: 1,
-			},
-		},
-	}
-	d := &Sparse64{
-		R: 2,
-		C: 2,
-		Matrix: []map[int]complex64{
-			map[int]complex64{
-				0: 1,
-				1: 0,
-			},
-			map[int]complex64{
-				0: 0,
-				1: 1,
-			},
-		},
-	}
+	identity := ISparse64()
+	d := ISparse64()
 	if indexes[0] {
 		d = b.Copy()
 	}
@@ -294,6 +268,30 @@ func (a *MachineSparse64) Multiply(b *Sparse64, c ...Qubit) {
 	}
 
 	a.Sparse64 = *d.Multiply(&a.Sparse64)
+}
+
+// ISparse64 identity matrix
+func ISparse64() *Sparse64 {
+	return &Sparse64{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex64{
+			map[int]complex64{
+				0: 1,
+				1: 0,
+			},
+			map[int]complex64{
+				0: 0,
+				1: 1,
+			},
+		},
+	}
+}
+
+// I multiply by identity
+func (a *MachineSparse64) I(qubits ...Qubit) *MachineSparse64 {
+	a.Multiply(ISparse64(), qubits...)
+	return a
 }
 
 // RXSparse64 x rotation matrix
@@ -315,8 +313,8 @@ func RXSparse64(theta complex128) *Sparse64 {
 }
 
 // RX rotate X gate
-func (a *MachineSparse64) RX(theta float64, c ...Qubit) *MachineSparse64 {
-	a.Multiply(RXSparse64(complex(theta/2, 0)), c...)
+func (a *MachineSparse64) RX(theta float64, qubits ...Qubit) *MachineSparse64 {
+	a.Multiply(RXSparse64(complex(theta/2, 0)), qubits...)
 	return a
 }
 
@@ -339,8 +337,8 @@ func RYSparse64(theta complex128) *Sparse64 {
 }
 
 // RY rotate Y gate
-func (a *MachineSparse64) RY(theta float64, c ...Qubit) *MachineSparse64 {
-	a.Multiply(RYSparse64(complex(theta/2, 0)), c...)
+func (a *MachineSparse64) RY(theta float64, qubits ...Qubit) *MachineSparse64 {
+	a.Multiply(RYSparse64(complex(theta/2, 0)), qubits...)
 	return a
 }
 
@@ -363,8 +361,8 @@ func RZSparse64(theta complex128) *Sparse64 {
 }
 
 // RZ rotate Z gate
-func (a *MachineSparse64) RZ(theta float64, c ...Qubit) *MachineSparse64 {
-	a.Multiply(RZSparse64(complex(theta/2, 0)), c...)
+func (a *MachineSparse64) RZ(theta float64, qubits ...Qubit) *MachineSparse64 {
+	a.Multiply(RZSparse64(complex(theta/2, 0)), qubits...)
 	return a
 }
 
@@ -606,40 +604,14 @@ func (a *MachineSparse128) ControlledNot(c []Qubit, t Qubit) *Sparse128 {
 }
 
 // Multiply multiplies the machine by a matrix
-func (a *MachineSparse128) Multiply(b *Sparse128, c ...Qubit) {
+func (a *MachineSparse128) Multiply(b *Sparse128, qubits ...Qubit) {
 	indexes := make(map[int]bool)
-	for _, value := range c {
+	for _, value := range qubits {
 		indexes[int(value)] = true
 	}
 
-	identity := &Sparse128{
-		R: 2,
-		C: 2,
-		Matrix: []map[int]complex128{
-			map[int]complex128{
-				0: 1,
-				1: 0,
-			},
-			map[int]complex128{
-				0: 0,
-				1: 1,
-			},
-		},
-	}
-	d := &Sparse128{
-		R: 2,
-		C: 2,
-		Matrix: []map[int]complex128{
-			map[int]complex128{
-				0: 1,
-				1: 0,
-			},
-			map[int]complex128{
-				0: 0,
-				1: 1,
-			},
-		},
-	}
+	identity := ISparse128()
+	d := ISparse128()
 	if indexes[0] {
 		d = b.Copy()
 	}
@@ -653,6 +625,30 @@ func (a *MachineSparse128) Multiply(b *Sparse128, c ...Qubit) {
 	}
 
 	a.Sparse128 = *d.Multiply(&a.Sparse128)
+}
+
+// ISparse128 identity matrix
+func ISparse128() *Sparse128 {
+	return &Sparse128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: 1,
+				1: 0,
+			},
+			map[int]complex128{
+				0: 0,
+				1: 1,
+			},
+		},
+	}
+}
+
+// I multiply by identity
+func (a *MachineSparse128) I(qubits ...Qubit) *MachineSparse128 {
+	a.Multiply(ISparse128(), qubits...)
+	return a
 }
 
 // RXSparse128 x rotation matrix
@@ -674,8 +670,8 @@ func RXSparse128(theta complex128) *Sparse128 {
 }
 
 // RX rotate X gate
-func (a *MachineSparse128) RX(theta float64, c ...Qubit) *MachineSparse128 {
-	a.Multiply(RXSparse128(complex(theta/2, 0)), c...)
+func (a *MachineSparse128) RX(theta float64, qubits ...Qubit) *MachineSparse128 {
+	a.Multiply(RXSparse128(complex(theta/2, 0)), qubits...)
 	return a
 }
 
@@ -698,8 +694,8 @@ func RYSparse128(theta complex128) *Sparse128 {
 }
 
 // RY rotate Y gate
-func (a *MachineSparse128) RY(theta float64, c ...Qubit) *MachineSparse128 {
-	a.Multiply(RYSparse128(complex(theta/2, 0)), c...)
+func (a *MachineSparse128) RY(theta float64, qubits ...Qubit) *MachineSparse128 {
+	a.Multiply(RYSparse128(complex(theta/2, 0)), qubits...)
 	return a
 }
 
@@ -722,7 +718,7 @@ func RZSparse128(theta complex128) *Sparse128 {
 }
 
 // RZ rotate Z gate
-func (a *MachineSparse128) RZ(theta float64, c ...Qubit) *MachineSparse128 {
-	a.Multiply(RZSparse128(complex(theta/2, 0)), c...)
+func (a *MachineSparse128) RZ(theta float64, qubits ...Qubit) *MachineSparse128 {
+	a.Multiply(RZSparse128(complex(theta/2, 0)), qubits...)
 	return a
 }

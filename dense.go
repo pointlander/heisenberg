@@ -188,28 +188,14 @@ func (a *MachineDense64) ControlledNot(c []Qubit, t Qubit) *Dense64 {
 }
 
 // Multiply multiplies the machine by a matrix
-func (a *MachineDense64) Multiply(b *Dense64, c ...Qubit) {
+func (a *MachineDense64) Multiply(b *Dense64, qubits ...Qubit) {
 	indexes := make(map[int]bool)
-	for _, value := range c {
+	for _, value := range qubits {
 		indexes[int(value)] = true
 	}
 
-	identity := &Dense64{
-		R: 2,
-		C: 2,
-		Matrix: []complex64{
-			1, 0,
-			0, 1,
-		},
-	}
-	d := &Dense64{
-		R: 2,
-		C: 2,
-		Matrix: []complex64{
-			1, 0,
-			0, 1,
-		},
-	}
+	identity := IDense64()
+	d := IDense64()
 	if indexes[0] {
 		d = b.Copy()
 	}
@@ -225,6 +211,24 @@ func (a *MachineDense64) Multiply(b *Dense64, c ...Qubit) {
 	a.Dense64 = *d.Multiply(&a.Dense64)
 }
 
+// IDense64 identity matrix
+func IDense64() *Dense64 {
+	return &Dense64{
+		R: 2,
+		C: 2,
+		Matrix: []complex64{
+			1, 0,
+			0, 1,
+		},
+	}
+}
+
+// I multiply by identity
+func (a *MachineDense64) I(qubits ...Qubit) *MachineDense64 {
+	a.Multiply(IDense64(), qubits...)
+	return a
+}
+
 // RXDense64 x rotation matrix
 func RXDense64(theta complex128) *Dense64 {
 	return &Dense64{
@@ -238,8 +242,8 @@ func RXDense64(theta complex128) *Dense64 {
 }
 
 // RX rotate X gate
-func (a *MachineDense64) RX(theta float64, c ...Qubit) *MachineDense64 {
-	a.Multiply(RXDense64(complex(theta/2, 0)), c...)
+func (a *MachineDense64) RX(theta float64, qubits ...Qubit) *MachineDense64 {
+	a.Multiply(RXDense64(complex(theta/2, 0)), qubits...)
 	return a
 }
 
@@ -256,8 +260,8 @@ func RYDense64(theta complex128) *Dense64 {
 }
 
 // RY rotate Y gate
-func (a *MachineDense64) RY(theta float64, c ...Qubit) *MachineDense64 {
-	a.Multiply(RYDense64(complex(theta/2, 0)), c...)
+func (a *MachineDense64) RY(theta float64, qubits ...Qubit) *MachineDense64 {
+	a.Multiply(RYDense64(complex(theta/2, 0)), qubits...)
 	return a
 }
 
@@ -274,8 +278,8 @@ func RZDense64(theta complex128) *Dense64 {
 }
 
 // RZ rotate Z gate
-func (a *MachineDense64) RZ(theta float64, c ...Qubit) *MachineDense64 {
-	a.Multiply(RZDense64(complex(theta/2, 0)), c...)
+func (a *MachineDense64) RZ(theta float64, qubits ...Qubit) *MachineDense64 {
+	a.Multiply(RZDense64(complex(theta/2, 0)), qubits...)
 	return a
 }
 
@@ -464,22 +468,8 @@ func (a *MachineDense128) Multiply(b *Dense128, c ...Qubit) {
 		indexes[int(value)] = true
 	}
 
-	identity := &Dense128{
-		R: 2,
-		C: 2,
-		Matrix: []complex128{
-			1, 0,
-			0, 1,
-		},
-	}
-	d := &Dense128{
-		R: 2,
-		C: 2,
-		Matrix: []complex128{
-			1, 0,
-			0, 1,
-		},
-	}
+	identity := IDense128()
+	d := IDense128()
 	if indexes[0] {
 		d = b.Copy()
 	}
@@ -495,6 +485,24 @@ func (a *MachineDense128) Multiply(b *Dense128, c ...Qubit) {
 	a.Dense128 = *d.Multiply(&a.Dense128)
 }
 
+// IDense128 identity matrix
+func IDense128() *Dense128 {
+	return &Dense128{
+		R: 2,
+		C: 2,
+		Matrix: []complex128{
+			1, 0,
+			0, 1,
+		},
+	}
+}
+
+// I multiply by identity
+func (a *MachineDense128) I(qubits ...Qubit) *MachineDense128 {
+	a.Multiply(IDense128(), qubits...)
+	return a
+}
+
 // RXDense128 x rotation matrix
 func RXDense128(theta complex128) *Dense128 {
 	return &Dense128{
@@ -508,8 +516,8 @@ func RXDense128(theta complex128) *Dense128 {
 }
 
 // RX rotate X gate
-func (a *MachineDense128) RX(theta float64, c ...Qubit) *MachineDense128 {
-	a.Multiply(RXDense128(complex(theta/2, 0)), c...)
+func (a *MachineDense128) RX(theta float64, qubits ...Qubit) *MachineDense128 {
+	a.Multiply(RXDense128(complex(theta/2, 0)), qubits...)
 	return a
 }
 
@@ -526,8 +534,8 @@ func RYDense128(theta complex128) *Dense128 {
 }
 
 // RY rotate Y gate
-func (a *MachineDense128) RY(theta float64, c ...Qubit) *MachineDense128 {
-	a.Multiply(RYDense128(complex(theta/2, 0)), c...)
+func (a *MachineDense128) RY(theta float64, qubits ...Qubit) *MachineDense128 {
+	a.Multiply(RYDense128(complex(theta/2, 0)), qubits...)
 	return a
 }
 
@@ -544,7 +552,7 @@ func RZDense128(theta complex128) *Dense128 {
 }
 
 // RZ rotate Z gate
-func (a *MachineDense128) RZ(theta float64, c ...Qubit) *MachineDense128 {
-	a.Multiply(RZDense128(complex(theta/2, 0)), c...)
+func (a *MachineDense128) RZ(theta float64, qubits ...Qubit) *MachineDense128 {
+	a.Multiply(RZDense128(complex(theta/2, 0)), qubits...)
 	return a
 }
