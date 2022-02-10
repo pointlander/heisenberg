@@ -422,6 +422,31 @@ func (a *MachineSparse64) T(qubits ...Qubit) *MachineSparse64 {
 	return a
 }
 
+// USparse64 U gate
+func USparse64(theta, phi, lambda float64) *Sparse64 {
+	v := complex(theta/2, 0)
+	return &Sparse64{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex64{
+			map[int]complex64{
+				0: complex64(cmplx.Cos(v)),
+				1: complex64(-1 * cmplx.Exp(complex(0, lambda)) * cmplx.Sin(v)),
+			},
+			map[int]complex64{
+				0: complex64(cmplx.Exp(complex(0, phi)) * cmplx.Sin(v)),
+				1: complex64(cmplx.Exp(complex(0, (phi+lambda))) * cmplx.Cos(v)),
+			},
+		},
+	}
+}
+
+// U multiply by U matrix
+func (a *MachineSparse64) U(theta, phi, lambda float64, qubits ...Qubit) *MachineSparse64 {
+	a.Multiply(USparse64(theta, phi, lambda), qubits...)
+	return a
+}
+
 // RXSparse64 x rotation matrix
 func RXSparse64(theta complex128) *Sparse64 {
 	return &Sparse64{
@@ -901,6 +926,31 @@ func TSparse128() *Sparse128 {
 // T multiply by T matrix
 func (a *MachineSparse128) T(qubits ...Qubit) *MachineSparse128 {
 	a.Multiply(TSparse128(), qubits...)
+	return a
+}
+
+// USparse128 U gate
+func USparse128(theta, phi, lambda float64) *Sparse128 {
+	v := complex(theta/2, 0)
+	return &Sparse128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: cmplx.Cos(v),
+				1: -1 * cmplx.Exp(complex(0, lambda)) * cmplx.Sin(v),
+			},
+			map[int]complex128{
+				0: cmplx.Exp(complex(0, phi)) * cmplx.Sin(v),
+				1: cmplx.Exp(complex(0, (phi+lambda))) * cmplx.Cos(v),
+			},
+		},
+	}
+}
+
+// U multiply by U matrix
+func (a *MachineSparse128) U(theta, phi, lambda float64, qubits ...Qubit) *MachineSparse128 {
+	a.Multiply(USparse128(theta, phi, lambda), qubits...)
 	return a
 }
 

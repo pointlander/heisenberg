@@ -339,6 +339,25 @@ func (a *MachineDense64) T(qubits ...Qubit) *MachineDense64 {
 	return a
 }
 
+// UDense64 U gate
+func UDense64(theta, phi, lambda float64) *Dense64 {
+	v := complex(theta/2, 0)
+	return &Dense64{
+		R: 2,
+		C: 2,
+		Matrix: []complex64{
+			complex64(cmplx.Cos(v)), complex64(-1 * cmplx.Exp(complex(0, lambda)) * cmplx.Sin(v)),
+			complex64(cmplx.Exp(complex(0, phi)) * cmplx.Sin(v)), complex64(cmplx.Exp(complex(0, (phi+lambda))) * cmplx.Cos(v)),
+		},
+	}
+}
+
+// U multiply by U matrix
+func (a *MachineDense64) U(theta, phi, lambda float64, qubits ...Qubit) *MachineDense64 {
+	a.Multiply(UDense64(theta, phi, lambda), qubits...)
+	return a
+}
+
 // RXDense64 x rotation matrix
 func RXDense64(theta complex128) *Dense64 {
 	return &Dense64{
@@ -719,6 +738,25 @@ func TDense128() *Dense128 {
 // T multiply by T matrix
 func (a *MachineDense128) T(qubits ...Qubit) *MachineDense128 {
 	a.Multiply(TDense128(), qubits...)
+	return a
+}
+
+// UDense128 U gate
+func UDense128(theta, phi, lambda float64) *Dense128 {
+	v := complex(theta/2, 0)
+	return &Dense128{
+		R: 2,
+		C: 2,
+		Matrix: []complex128{
+			cmplx.Cos(v), -1 * cmplx.Exp(complex(0, lambda)) * cmplx.Sin(v),
+			cmplx.Exp(complex(0, phi)) * cmplx.Sin(v), cmplx.Exp(complex(0, (phi+lambda))) * cmplx.Cos(v),
+		},
+	}
+}
+
+// U multiply by U matrix
+func (a *MachineDense128) U(theta, phi, lambda float64, qubits ...Qubit) *MachineDense128 {
+	a.Multiply(UDense128(theta, phi, lambda), qubits...)
 	return a
 }
 
