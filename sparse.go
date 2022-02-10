@@ -392,6 +392,30 @@ func (a *MachineSparse64) Z(qubits ...Qubit) *MachineSparse64 {
 	return a
 }
 
+// SSparse64 phase gate
+func SSparse64() *Sparse64 {
+	return &Sparse64{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex64{
+			map[int]complex64{
+				0: 1,
+				1: 0,
+			},
+			map[int]complex64{
+				0: 0,
+				1: 1i,
+			},
+		},
+	}
+}
+
+// S multiply by phase matrix
+func (a *MachineSparse64) S(qubits ...Qubit) *MachineSparse64 {
+	a.Multiply(SSparse64(), qubits...)
+	return a
+}
+
 // RXSparse64 x rotation matrix
 func RXSparse64(theta complex128) *Sparse64 {
 	return &Sparse64{
@@ -822,7 +846,7 @@ func (a *MachineSparse128) Y(qubits ...Qubit) *MachineSparse128 {
 	return a
 }
 
-// ZSparse64 Pauli Z matrix
+// ZSparse128 Pauli Z matrix
 func ZSparse128() *Sparse128 {
 	return &Sparse128{
 		R: 2,
@@ -843,6 +867,30 @@ func ZSparse128() *Sparse128 {
 // Z multiply by Pauli Z matrix
 func (a *MachineSparse128) Z(qubits ...Qubit) *MachineSparse128 {
 	a.Multiply(ZSparse128(), qubits...)
+	return a
+}
+
+// SSparse128 phase gate
+func SSparse128() *Sparse128 {
+	return &Sparse128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: 1,
+				1: 0,
+			},
+			map[int]complex128{
+				0: 0,
+				1: 1i,
+			},
+		},
+	}
+}
+
+// S multiply by phase matrix
+func (a *MachineSparse128) S(qubits ...Qubit) *MachineSparse128 {
+	a.Multiply(SSparse128(), qubits...)
 	return a
 }
 

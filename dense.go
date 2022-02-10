@@ -303,6 +303,24 @@ func (a *MachineDense64) Z(qubits ...Qubit) *MachineDense64 {
 	return a
 }
 
+// SDense64 phase gate
+func SDense64() *Dense64 {
+	return &Dense64{
+		R: 2,
+		C: 2,
+		Matrix: []complex64{
+			1, 0,
+			0, 1i,
+		},
+	}
+}
+
+// S multiply by phase matrix
+func (a *MachineDense64) S(qubits ...Qubit) *MachineDense64 {
+	a.Multiply(SDense64(), qubits...)
+	return a
+}
+
 // RXDense64 x rotation matrix
 func RXDense64(theta complex128) *Dense64 {
 	return &Dense64{
@@ -647,6 +665,24 @@ func ZDense128() *Dense128 {
 // Z multiply by Pauli Z matrix
 func (a *MachineDense128) Z(qubits ...Qubit) *MachineDense128 {
 	a.Multiply(ZDense128(), qubits...)
+	return a
+}
+
+// SDense128 phase gate
+func SDense128() *Dense128 {
+	return &Dense128{
+		R: 2,
+		C: 2,
+		Matrix: []complex128{
+			1, 0,
+			0, 1i,
+		},
+	}
+}
+
+// S multiply by phase matrix
+func (a *MachineDense128) S(qubits ...Qubit) *MachineDense128 {
+	a.Multiply(SDense128(), qubits...)
 	return a
 }
 
