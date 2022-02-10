@@ -49,9 +49,7 @@ func (a *MachineSparse64) Zero() Qubit {
 			map[int]complex64{
 				0: 1,
 			},
-			map[int]complex64{
-				0: 0,
-			},
+			map[int]complex64{},
 		},
 	}
 	if qubit == 0 {
@@ -70,9 +68,7 @@ func (a *MachineSparse64) One() Qubit {
 		R: 2,
 		C: 1,
 		Matrix: []map[int]complex64{
-			map[int]complex64{
-				0: 0,
-			},
+			map[int]complex64{},
 			map[int]complex64{
 				0: 1,
 			},
@@ -195,10 +191,8 @@ func (a *MachineSparse64) ControlledNot(c []Qubit, t Qubit) *Sparse64 {
 		Matrix: []map[int]complex64{
 			map[int]complex64{
 				0: 1,
-				1: 0,
 			},
 			map[int]complex64{
-				0: 0,
 				1: 1,
 			},
 		},
@@ -279,10 +273,8 @@ func ISparse64() *Sparse64 {
 		Matrix: []map[int]complex64{
 			map[int]complex64{
 				0: 1,
-				1: 0,
 			},
 			map[int]complex64{
-				0: 0,
 				1: 1,
 			},
 		},
@@ -327,12 +319,10 @@ func XSparse64() *Sparse64 {
 		C: 2,
 		Matrix: []map[int]complex64{
 			map[int]complex64{
-				0: 0,
 				1: 1,
 			},
 			map[int]complex64{
 				0: 1,
-				1: 0,
 			},
 		},
 	}
@@ -351,12 +341,10 @@ func YSparse64() *Sparse64 {
 		C: 2,
 		Matrix: []map[int]complex64{
 			map[int]complex64{
-				0: 0,
 				1: -1i,
 			},
 			map[int]complex64{
 				0: 1i,
-				1: 0,
 			},
 		},
 	}
@@ -376,10 +364,8 @@ func ZSparse64() *Sparse64 {
 		Matrix: []map[int]complex64{
 			map[int]complex64{
 				0: 1,
-				1: 0,
 			},
 			map[int]complex64{
-				0: 0,
 				1: -1,
 			},
 		},
@@ -400,10 +386,8 @@ func SSparse64() *Sparse64 {
 		Matrix: []map[int]complex64{
 			map[int]complex64{
 				0: 1,
-				1: 0,
 			},
 			map[int]complex64{
-				0: 0,
 				1: 1i,
 			},
 		},
@@ -413,6 +397,28 @@ func SSparse64() *Sparse64 {
 // S multiply by phase matrix
 func (a *MachineSparse64) S(qubits ...Qubit) *MachineSparse64 {
 	a.Multiply(SSparse64(), qubits...)
+	return a
+}
+
+// TSparse64 T gate
+func TSparse64() *Sparse64 {
+	return &Sparse64{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex64{
+			map[int]complex64{
+				0: 1,
+			},
+			map[int]complex64{
+				1: complex64(cmplx.Exp(1i * math.Pi / 4)),
+			},
+		},
+	}
+}
+
+// T multiply by T matrix
+func (a *MachineSparse64) T(qubits ...Qubit) *MachineSparse64 {
+	a.Multiply(TSparse64(), qubits...)
 	return a
 }
 
@@ -527,9 +533,7 @@ func (a *MachineSparse128) Zero() Qubit {
 			map[int]complex128{
 				0: 1,
 			},
-			map[int]complex128{
-				0: 0,
-			},
+			map[int]complex128{},
 		},
 	}
 	if qubit == 0 {
@@ -548,9 +552,7 @@ func (a *MachineSparse128) One() Qubit {
 		R: 2,
 		C: 1,
 		Matrix: []map[int]complex128{
-			map[int]complex128{
-				0: 0,
-			},
+			map[int]complex128{},
 			map[int]complex128{
 				0: 1,
 			},
@@ -673,10 +675,8 @@ func (a *MachineSparse128) ControlledNot(c []Qubit, t Qubit) *Sparse128 {
 		Matrix: []map[int]complex128{
 			map[int]complex128{
 				0: 1,
-				1: 0,
 			},
 			map[int]complex128{
-				0: 0,
 				1: 1,
 			},
 		},
@@ -757,10 +757,8 @@ func ISparse128() *Sparse128 {
 		Matrix: []map[int]complex128{
 			map[int]complex128{
 				0: 1,
-				1: 0,
 			},
 			map[int]complex128{
-				0: 0,
 				1: 1,
 			},
 		},
@@ -805,12 +803,10 @@ func XSparse128() *Sparse128 {
 		C: 2,
 		Matrix: []map[int]complex128{
 			map[int]complex128{
-				0: 0,
 				1: 1,
 			},
 			map[int]complex128{
 				0: 1,
-				1: 0,
 			},
 		},
 	}
@@ -829,12 +825,10 @@ func YSparse128() *Sparse128 {
 		C: 2,
 		Matrix: []map[int]complex128{
 			map[int]complex128{
-				0: 0,
 				1: -1i,
 			},
 			map[int]complex128{
 				0: 1i,
-				1: 0,
 			},
 		},
 	}
@@ -854,10 +848,8 @@ func ZSparse128() *Sparse128 {
 		Matrix: []map[int]complex128{
 			map[int]complex128{
 				0: 1,
-				1: 0,
 			},
 			map[int]complex128{
-				0: 0,
 				1: -1,
 			},
 		},
@@ -878,10 +870,8 @@ func SSparse128() *Sparse128 {
 		Matrix: []map[int]complex128{
 			map[int]complex128{
 				0: 1,
-				1: 0,
 			},
 			map[int]complex128{
-				0: 0,
 				1: 1i,
 			},
 		},
@@ -891,6 +881,28 @@ func SSparse128() *Sparse128 {
 // S multiply by phase matrix
 func (a *MachineSparse128) S(qubits ...Qubit) *MachineSparse128 {
 	a.Multiply(SSparse128(), qubits...)
+	return a
+}
+
+// TSparse128 T gate
+func TSparse128() *Sparse128 {
+	return &Sparse128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: 1,
+			},
+			map[int]complex128{
+				1: cmplx.Exp(1i * math.Pi / 4),
+			},
+		},
+	}
+}
+
+// T multiply by T matrix
+func (a *MachineSparse128) T(qubits ...Qubit) *MachineSparse128 {
+	a.Multiply(TSparse128(), qubits...)
 	return a
 }
 
@@ -950,10 +962,8 @@ func RZSparse128(theta complex128) *Sparse128 {
 		Matrix: []map[int]complex128{
 			map[int]complex128{
 				0: cmplx.Exp(-1 * theta),
-				1: 0,
 			},
 			map[int]complex128{
-				0: 0,
 				1: cmplx.Exp(theta),
 			},
 		},
