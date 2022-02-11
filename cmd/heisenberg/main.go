@@ -6,13 +6,12 @@ package main
 
 import (
 	"fmt"
+
+	"github.com/pointlander/heisenberg"
 )
 
-// Qubit is a qubit
-type Qubit uint64
-
 func main() {
-	cnot := Dense64{
+	cnot := heisenberg.Dense64{
 		R: 2,
 		C: 2,
 		Matrix: []complex64{
@@ -23,7 +22,7 @@ func main() {
 	unitary := cnot.Tensor(&cnot)
 	fmt.Printf("%s", unitary)
 
-	cnot = Dense64{
+	cnot = heisenberg.Dense64{
 		R: 4,
 		C: 4,
 		Matrix: []complex64{
@@ -38,18 +37,18 @@ func main() {
 	fmt.Printf("%s", unitary)
 
 	fmt.Printf("\n")
-	machine := MachineDense64{}
+	machine := heisenberg.MachineDense64{}
 	machine.One()
 	machine.One()
 	machine.Zero()
 	fmt.Println(machine)
 
 	fmt.Printf("\n")
-	a := machine.ControlledNot([]Qubit{0}, 2)
+	a := machine.ControlledNot([]heisenberg.Qubit{0}, 2)
 	fmt.Printf("%s", a)
 
 	fmt.Printf("\n")
-	b := machine.ControlledNot([]Qubit{0, 1}, 2)
+	b := machine.ControlledNot([]heisenberg.Qubit{0, 1}, 2)
 	fmt.Printf("%s", b)
 
 	fmt.Printf("\n")
