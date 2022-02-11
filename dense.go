@@ -412,6 +412,20 @@ func (a *MachineDense64) RZ(theta float64, qubits ...Qubit) *MachineDense64 {
 	return a
 }
 
+// Swap swaps qubits`
+func (a *MachineDense64) Swap(qubits ...Qubit) *MachineDense64 {
+	length := len(qubits)
+
+	for i := 0; i < length/2; i++ {
+		c, t := qubits[i], qubits[(length-1)-i]
+		a.ControlledNot([]Qubit{c}, t)
+		a.ControlledNot([]Qubit{t}, c)
+		a.ControlledNot([]Qubit{c}, t)
+	}
+
+	return a
+}
+
 // Dense128 is an algebriac matrix
 type Dense128 struct {
 	R, C   int
@@ -811,5 +825,19 @@ func RZDense128(theta complex128) *Dense128 {
 // RZ rotate Z gate
 func (a *MachineDense128) RZ(theta float64, qubits ...Qubit) *MachineDense128 {
 	a.Multiply(RZDense128(complex(theta/2, 0)), qubits...)
+	return a
+}
+
+// Swap swaps qubits`
+func (a *MachineDense128) Swap(qubits ...Qubit) *MachineDense128 {
+	length := len(qubits)
+
+	for i := 0; i < length/2; i++ {
+		c, t := qubits[i], qubits[(length-1)-i]
+		a.ControlledNot([]Qubit{c}, t)
+		a.ControlledNot([]Qubit{t}, c)
+		a.ControlledNot([]Qubit{c}, t)
+	}
+
 	return a
 }

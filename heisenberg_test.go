@@ -324,3 +324,55 @@ func TestRZDense128(t *testing.T) {
 		t.Fatal("invalid qubit value")
 	}
 }
+
+func TestSwapDense64(t *testing.T) {
+	machine := MachineDense64{}
+	q0 := machine.Zero()
+	q1 := machine.One()
+	machine.Swap(q0, q1)
+	expect := []complex64{0, 0, 1, 0}
+	for i, value := range expect {
+		if value != machine.Matrix[i] {
+			t.Fatal("swap didn't work")
+		}
+	}
+}
+
+func TestSwapDense128(t *testing.T) {
+	machine := MachineDense128{}
+	q0 := machine.Zero()
+	q1 := machine.One()
+	machine.Swap(q0, q1)
+	expect := []complex128{0, 0, 1, 0}
+	for i, value := range expect {
+		if value != machine.Matrix[i] {
+			t.Fatal("swap didn't work")
+		}
+	}
+}
+
+func TestSwapSparse64(t *testing.T) {
+	machine := MachineSparse64{}
+	q0 := machine.Zero()
+	q1 := machine.One()
+	machine.Swap(q0, q1)
+	expect := []complex64{0, 0, 1, 0}
+	for i, value := range expect {
+		if value != machine.Matrix[i][0] {
+			t.Fatal("swap didn't work")
+		}
+	}
+}
+
+func TestSwapSparse128(t *testing.T) {
+	machine := MachineSparse128{}
+	q0 := machine.Zero()
+	q1 := machine.One()
+	machine.Swap(q0, q1)
+	expect := []complex128{0, 0, 1, 0}
+	for i, value := range expect {
+		if value != machine.Matrix[i][0] {
+			t.Fatal("swap didn't work")
+		}
+	}
+}

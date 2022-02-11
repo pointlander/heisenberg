@@ -517,6 +517,20 @@ func (a *MachineSparse64) RZ(theta float64, qubits ...Qubit) *MachineSparse64 {
 	return a
 }
 
+// Swap swaps qubits`
+func (a *MachineSparse64) Swap(qubits ...Qubit) *MachineSparse64 {
+	length := len(qubits)
+
+	for i := 0; i < length/2; i++ {
+		c, t := qubits[i], qubits[(length-1)-i]
+		a.ControlledNot([]Qubit{c}, t)
+		a.ControlledNot([]Qubit{t}, c)
+		a.ControlledNot([]Qubit{c}, t)
+	}
+
+	return a
+}
+
 // Sparse128 is an algebriac matrix
 type Sparse128 struct {
 	R, C   int
@@ -1021,5 +1035,19 @@ func RZSparse128(theta complex128) *Sparse128 {
 // RZ rotate Z gate
 func (a *MachineSparse128) RZ(theta float64, qubits ...Qubit) *MachineSparse128 {
 	a.Multiply(RZSparse128(complex(theta/2, 0)), qubits...)
+	return a
+}
+
+// Swap swaps qubits`
+func (a *MachineSparse128) Swap(qubits ...Qubit) *MachineSparse128 {
+	length := len(qubits)
+
+	for i := 0; i < length/2; i++ {
+		c, t := qubits[i], qubits[(length-1)-i]
+		a.ControlledNot([]Qubit{c}, t)
+		a.ControlledNot([]Qubit{t}, c)
+		a.ControlledNot([]Qubit{c}, t)
+	}
+
 	return a
 }
