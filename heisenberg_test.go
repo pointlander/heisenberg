@@ -174,16 +174,10 @@ func TestMultiply64(t *testing.T) {
 	machineSparse.ControlledNot([]Qubit{0}, 1)
 	machineSparse.ControlledNot([]Qubit{0, 1}, 2)
 
-	for i := 0; i < machineDense.R; i += machineDense.C {
-		a := machineSparse.Matrix[i]
-		for j := 0; j < machineDense.C; j++ {
-			var value complex64
-			if a != nil {
-				value = a[j]
-			}
-			if value != machineDense.Matrix[i*machineDense.C+j] {
-				t.Fatalf("%d %d %f != %f", i, j, value, machineDense.Matrix[i*machineDense.C+j])
-			}
+	a := machineSparse.Vector64
+	for i := 0; i < machineDense.R; i++ {
+		if a[i] != machineDense.Matrix[i] {
+			t.Fatalf("%d %f != %f", i, a[i], machineDense.Matrix[i])
 		}
 	}
 }
@@ -203,16 +197,10 @@ func TestMultiply128(t *testing.T) {
 	machineSparse.ControlledNot([]Qubit{0}, 1)
 	machineSparse.ControlledNot([]Qubit{0, 1}, 2)
 
-	for i := 0; i < machineDense.R; i += machineDense.C {
-		a := machineSparse.Matrix[i]
-		for j := 0; j < machineDense.C; j++ {
-			var value complex128
-			if a != nil {
-				value = a[j]
-			}
-			if value != machineDense.Matrix[i*machineDense.C+j] {
-				t.Fatalf("%d %d %f != %f", i, j, value, machineDense.Matrix[i*machineDense.C+j])
-			}
+	a := machineSparse.Vector128
+	for i := 0; i < machineDense.R; i++ {
+		if a[i] != machineDense.Matrix[i] {
+			t.Fatalf("%d %f != %f", i, a[i], machineDense.Matrix[i])
 		}
 	}
 }
@@ -221,7 +209,7 @@ func TestRXSparse64(t *testing.T) {
 	machine := MachineSparse64{}
 	qubit := machine.Zero()
 	machine.RX(4*math.Pi, qubit)
-	if round64(machine.Matrix[0][0]) != 1 && round64(machine.Matrix[0][1]) != 0 {
+	if round64(machine.Vector64[0]) != 1 && round64(machine.Vector64[1]) != 0 {
 		t.Fatal("invalid qubit value")
 	}
 }
@@ -230,7 +218,7 @@ func TestRYSparse64(t *testing.T) {
 	machine := MachineSparse64{}
 	qubit := machine.Zero()
 	machine.RY(4*math.Pi, qubit)
-	if round64(machine.Matrix[0][0]) != 1 && round64(machine.Matrix[0][1]) != 0 {
+	if round64(machine.Vector64[0]) != 1 && round64(machine.Vector64[1]) != 0 {
 		t.Fatal("invalid qubit value")
 	}
 }
@@ -239,7 +227,7 @@ func TestRZSparse64(t *testing.T) {
 	machine := MachineSparse64{}
 	qubit := machine.Zero()
 	machine.RZ(4*math.Pi, qubit)
-	if round64(machine.Matrix[0][0]) != 1 && round64(machine.Matrix[0][1]) != 0 {
+	if round64(machine.Vector64[0]) != 1 && round64(machine.Vector64[1]) != 0 {
 		t.Fatal("invalid qubit value")
 	}
 }
@@ -248,7 +236,7 @@ func TestRXSparse128(t *testing.T) {
 	machine := MachineSparse128{}
 	qubit := machine.Zero()
 	machine.RX(4*math.Pi, qubit)
-	if round128(machine.Matrix[0][0]) != 1 && round128(machine.Matrix[0][1]) != 0 {
+	if round128(machine.Vector128[0]) != 1 && round128(machine.Vector128[1]) != 0 {
 		t.Fatal("invalid qubit value")
 	}
 }
@@ -257,7 +245,7 @@ func TestRYSparse128(t *testing.T) {
 	machine := MachineSparse128{}
 	qubit := machine.Zero()
 	machine.RY(4*math.Pi, qubit)
-	if round128(machine.Matrix[0][0]) != 1 && round128(machine.Matrix[0][1]) != 0 {
+	if round128(machine.Vector128[0]) != 1 && round128(machine.Vector128[1]) != 0 {
 		t.Fatal("invalid qubit value")
 	}
 }
@@ -266,7 +254,7 @@ func TestRZSparse128(t *testing.T) {
 	machine := MachineSparse128{}
 	qubit := machine.Zero()
 	machine.RZ(4*math.Pi, qubit)
-	if round128(machine.Matrix[0][0]) != 1 && round128(machine.Matrix[0][1]) != 0 {
+	if round128(machine.Vector128[0]) != 1 && round128(machine.Vector128[1]) != 0 {
 		t.Fatal("invalid qubit value")
 	}
 }
@@ -358,7 +346,7 @@ func TestSwapSparse64(t *testing.T) {
 	machine.Swap(q0, q1)
 	expect := []complex64{0, 0, 1, 0}
 	for i, value := range expect {
-		if value != machine.Matrix[i][0] {
+		if value != machine.Vector64[i] {
 			t.Fatal("swap didn't work")
 		}
 	}
@@ -371,7 +359,7 @@ func TestSwapSparse128(t *testing.T) {
 	machine.Swap(q0, q1)
 	expect := []complex128{0, 0, 1, 0}
 	for i, value := range expect {
-		if value != machine.Matrix[i][0] {
+		if value != machine.Vector128[i] {
 			t.Fatal("swap didn't work")
 		}
 	}

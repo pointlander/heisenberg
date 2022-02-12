@@ -32,9 +32,20 @@ func (a Sparse64) String() string {
 	return output
 }
 
+// Vector64 is a 64 bit vector
+type Vector64 []complex64
+
+func (a Vector64) String() string {
+	output := ""
+	for _, value := range a {
+		output += fmt.Sprintf("%f ", value)
+	}
+	return output
+}
+
 // MachineSparse64 is a 64 bit sparse matrix machine
 type MachineSparse64 struct {
-	Sparse64
+	Vector64
 	Qubits int
 }
 
@@ -42,21 +53,12 @@ type MachineSparse64 struct {
 func (a *MachineSparse64) Zero() Qubit {
 	qubit := Qubit(a.Qubits)
 	a.Qubits++
-	zero := Sparse64{
-		R: 2,
-		C: 1,
-		Matrix: []map[int]complex64{
-			map[int]complex64{
-				0: 1,
-			},
-			map[int]complex64{},
-		},
-	}
+	zero := Vector64{1, 0}
 	if qubit == 0 {
-		a.Sparse64 = zero
+		a.Vector64 = zero
 		return qubit
 	}
-	a.Sparse64 = *a.Tensor(&zero)
+	a.Vector64 = a.Tensor(zero)
 	return qubit
 }
 
@@ -64,21 +66,12 @@ func (a *MachineSparse64) Zero() Qubit {
 func (a *MachineSparse64) One() Qubit {
 	qubit := Qubit(a.Qubits)
 	a.Qubits++
-	one := Sparse64{
-		R: 2,
-		C: 1,
-		Matrix: []map[int]complex64{
-			map[int]complex64{},
-			map[int]complex64{
-				0: 1,
-			},
-		},
-	}
+	one := Vector64{0, 1}
 	if qubit == 0 {
-		a.Sparse64 = one
+		a.Vector64 = one
 		return qubit
 	}
-	a.Sparse64 = *a.Tensor(&one)
+	a.Vector64 = a.Tensor(one)
 	return qubit
 }
 
@@ -182,6 +175,34 @@ func (a *Sparse64) Copy() *Sparse64 {
 	return cp
 }
 
+// Tensor product is the tensor product
+func (a Vector64) Tensor(b Vector64) Vector64 {
+	output := make(Vector64, 0, len(a)*len(b))
+	for _, ii := range a {
+		for _, jj := range b {
+			output = append(output, ii*jj)
+		}
+	}
+
+	return output
+}
+
+// MultiplyVector multiplies a matrix by a vector
+func (a *Sparse64) MultiplyVector(b Vector64) Vector64 {
+	if a.C != len(b) {
+		panic(fmt.Sprintf("invalid dimensions %d %d", a.C, len(b)))
+	}
+	output := make(Vector64, 0, a.R)
+	for _, xx := range a.Matrix {
+		var sum complex64
+		for y, value := range xx {
+			sum += b[y] * value
+		}
+		output = append(output, sum)
+	}
+	return output
+}
+
 // ControlledNot controlled not gate
 func (a *MachineSparse64) ControlledNot(c []Qubit, t Qubit) *Sparse64 {
 	n := a.Qubits
@@ -236,7 +257,7 @@ func (a *MachineSparse64) ControlledNot(c []Qubit, t Qubit) *Sparse64 {
 		g.Matrix[i] = q.Matrix[int(ii)]
 	}
 
-	a.Sparse64 = *g.Multiply(&a.Sparse64)
+	a.Vector64 = g.MultiplyVector(a.Vector64)
 
 	return &g
 }
@@ -262,7 +283,7 @@ func (a *MachineSparse64) Multiply(b *Sparse64, qubits ...Qubit) {
 		d = d.Tensor(identity)
 	}
 
-	a.Sparse64 = *d.Multiply(&a.Sparse64)
+	a.Vector64 = d.MultiplyVector(a.Vector64)
 }
 
 // ISparse64 identity matrix
@@ -553,9 +574,20 @@ func (a Sparse128) String() string {
 	return output
 }
 
+// Vector128 is a 128 bit vector
+type Vector128 []complex128
+
+func (a Vector128) String() string {
+	output := ""
+	for _, value := range a {
+		output += fmt.Sprintf("%f ", value)
+	}
+	return output
+}
+
 // MachineSparse128 is a 128 bit sparse matrix machine
 type MachineSparse128 struct {
-	Sparse128
+	Vector128
 	Qubits int
 }
 
@@ -563,21 +595,12 @@ type MachineSparse128 struct {
 func (a *MachineSparse128) Zero() Qubit {
 	qubit := Qubit(a.Qubits)
 	a.Qubits++
-	zero := Sparse128{
-		R: 2,
-		C: 1,
-		Matrix: []map[int]complex128{
-			map[int]complex128{
-				0: 1,
-			},
-			map[int]complex128{},
-		},
-	}
+	zero := Vector128{1, 0}
 	if qubit == 0 {
-		a.Sparse128 = zero
+		a.Vector128 = zero
 		return qubit
 	}
-	a.Sparse128 = *a.Tensor(&zero)
+	a.Vector128 = a.Tensor(zero)
 	return qubit
 }
 
@@ -585,21 +608,12 @@ func (a *MachineSparse128) Zero() Qubit {
 func (a *MachineSparse128) One() Qubit {
 	qubit := Qubit(a.Qubits)
 	a.Qubits++
-	one := Sparse128{
-		R: 2,
-		C: 1,
-		Matrix: []map[int]complex128{
-			map[int]complex128{},
-			map[int]complex128{
-				0: 1,
-			},
-		},
-	}
+	one := Vector128{0, 1}
 	if qubit == 0 {
-		a.Sparse128 = one
+		a.Vector128 = one
 		return qubit
 	}
-	a.Sparse128 = *a.Tensor(&one)
+	a.Vector128 = a.Tensor(one)
 	return qubit
 }
 
@@ -703,6 +717,34 @@ func (a *Sparse128) Copy() *Sparse128 {
 	return cp
 }
 
+// Tensor product is the tensor product
+func (a Vector128) Tensor(b Vector128) Vector128 {
+	output := make(Vector128, 0, len(a)*len(b))
+	for _, ii := range a {
+		for _, jj := range b {
+			output = append(output, ii*jj)
+		}
+	}
+
+	return output
+}
+
+// MultiplyVector multiplies a matrix by a vector
+func (a *Sparse128) MultiplyVector(b Vector128) Vector128 {
+	if a.C != len(b) {
+		panic(fmt.Sprintf("invalid dimensions %d %d", a.C, len(b)))
+	}
+	output := make(Vector128, 0, a.R)
+	for _, xx := range a.Matrix {
+		var sum complex128
+		for y, value := range xx {
+			sum += b[y] * value
+		}
+		output = append(output, sum)
+	}
+	return output
+}
+
 // ControlledNot controlled not gate
 func (a *MachineSparse128) ControlledNot(c []Qubit, t Qubit) *Sparse128 {
 	n := a.Qubits
@@ -757,7 +799,7 @@ func (a *MachineSparse128) ControlledNot(c []Qubit, t Qubit) *Sparse128 {
 		g.Matrix[i] = q.Matrix[int(ii)]
 	}
 
-	a.Sparse128 = *g.Multiply(&a.Sparse128)
+	a.Vector128 = g.MultiplyVector(a.Vector128)
 
 	return &g
 }
@@ -783,7 +825,7 @@ func (a *MachineSparse128) Multiply(b *Sparse128, qubits ...Qubit) {
 		d = d.Tensor(identity)
 	}
 
-	a.Sparse128 = *d.Multiply(&a.Sparse128)
+	a.Vector128 = d.MultiplyVector(a.Vector128)
 }
 
 // ISparse128 identity matrix
