@@ -68,7 +68,7 @@ func main() {
 	fmt.Println(machine)
 
 	heisenberg.Optimize(8, 8, [][2][]float64{
-		[2][]float64{[]float64{0, 1}, []float64{0, 1}},
-		[2][]float64{[]float64{1, 0}, []float64{1, 0}},
+		[2][]float64{[]float64{0, 1}, []float64{1, 0}},
+		[2][]float64{[]float64{1, 0}, []float64{0, 1}},
 	})
 }

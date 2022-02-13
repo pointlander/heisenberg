@@ -125,9 +125,15 @@ func (g *Genome) Execute() {
 				machine.RZ(gate.Theta, gate.Qubits...)
 			}
 		}
-		for i := 0; i < len(probability[1]); i++ {
+		max, state := 0.0, 0
+		for i := 0; i < len(machine.Vector64); i++ {
 			abs := cmplx.Abs(complex128(machine.Vector64[i]))
-			x := abs*abs - probability[1][i]
+			if abs > max {
+				max, state = abs, i
+			}
+		}
+		for i := 0; i < len(probability[1]); i++ {
+			x := probability[1][i] - float64((state>>(g.Width-1-i))&1)
 			fitness += x * x
 		}
 	}
@@ -234,7 +240,7 @@ func Optimize(width, depth int, probabilities [][2][]float64) {
 		})
 		genomes = genomes[:100]
 		fmt.Println(genomes[0].Fitness)
-		for range genomes[:10] {
+		for i := 0; i < 10; i++ {
 			m1, m2 := rand.Intn(10), rand.Intn(10)
 			c1, c2 := genomes[m1].Copy(), genomes[m2].Copy()
 			g1, g2 := rand.Intn(depth), rand.Intn(depth)
@@ -245,6 +251,7 @@ func Optimize(width, depth int, probabilities [][2][]float64) {
 			cp := genomes[i].Copy()
 			g := rand.Intn(depth)
 			cp.Gates[g] = gate()
+			genomes = append(genomes, cp)
 		}
 	}
 }
