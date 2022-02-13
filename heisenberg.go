@@ -75,7 +75,7 @@ func (g *Genome) Copy() Genome {
 		cp.Gates[i].Lambda = g.Gates[i].Lambda
 	}
 	cp.Width = g.Width
-	cp.Probabilities = cp.Probabilities
+	cp.Probabilities = g.Probabilities
 	return cp
 }
 
