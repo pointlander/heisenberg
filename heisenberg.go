@@ -240,6 +240,9 @@ func Optimize(width, depth int, probabilities [][2][]float64) {
 		})
 		genomes = genomes[:100]
 		fmt.Println(genomes[0].Fitness)
+		if genomes[0].Fitness == 0 {
+			break
+		}
 		for i := 0; i < 10; i++ {
 			m1, m2 := rand.Intn(10), rand.Intn(10)
 			c1, c2 := genomes[m1].Copy(), genomes[m2].Copy()

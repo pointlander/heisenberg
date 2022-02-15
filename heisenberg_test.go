@@ -205,6 +205,134 @@ func TestMultiply128(t *testing.T) {
 	}
 }
 
+func TestControlledNotSparse64(t *testing.T) {
+	machine := MachineSparse64{}
+	machine.One()
+	machine.One()
+	machine.Zero()
+
+	a := machine.ControlledNot([]Qubit{0}, 2)
+	b := machine.ControlledNot([]Qubit{0, 1}, 2)
+	c := b.Multiply(a)
+	d := c.Copy()
+	d.Transpose()
+	var sum complex64
+	for i, ii := range c.Matrix {
+		for j, jj := range ii {
+			sum += d.Matrix[i][j] - jj
+		}
+	}
+	if sum != 0 {
+		t.Fatalf("sum %f should be zero", sum)
+	}
+
+	if machine.Vector64[0] != 0 ||
+		machine.Vector64[1] != 0 ||
+		machine.Vector64[2] != 0 ||
+		machine.Vector64[3] != 0 ||
+		machine.Vector64[4] != 0 ||
+		machine.Vector64[5] != 0 ||
+		machine.Vector64[6] != 1 ||
+		machine.Vector64[7] != 0 {
+		t.Fatalf("machine has bad state %f", machine.Vector64)
+	}
+}
+
+func TestControlledNotSparse128(t *testing.T) {
+	machine := MachineSparse128{}
+	machine.One()
+	machine.One()
+	machine.Zero()
+
+	a := machine.ControlledNot([]Qubit{0}, 2)
+	b := machine.ControlledNot([]Qubit{0, 1}, 2)
+	c := b.Multiply(a)
+	d := c.Copy()
+	d.Transpose()
+	var sum complex128
+	for i, ii := range c.Matrix {
+		for j, jj := range ii {
+			sum += d.Matrix[i][j] - jj
+		}
+	}
+	if sum != 0 {
+		t.Fatalf("sum %f should be zero", sum)
+	}
+
+	if machine.Vector128[0] != 0 ||
+		machine.Vector128[1] != 0 ||
+		machine.Vector128[2] != 0 ||
+		machine.Vector128[3] != 0 ||
+		machine.Vector128[4] != 0 ||
+		machine.Vector128[5] != 0 ||
+		machine.Vector128[6] != 1 ||
+		machine.Vector128[7] != 0 {
+		t.Fatalf("machine has bad state %f", machine.Vector128)
+	}
+}
+
+func TestControlledNotDense64(t *testing.T) {
+	machine := MachineDense64{}
+	machine.One()
+	machine.One()
+	machine.Zero()
+
+	a := machine.ControlledNot([]Qubit{0}, 2)
+	b := machine.ControlledNot([]Qubit{0, 1}, 2)
+	c := b.Multiply(a)
+	d := c.Copy()
+	d.Transpose()
+	var sum complex64
+	for i := range c.Matrix {
+		sum += d.Matrix[i] - c.Matrix[i]
+	}
+	if sum != 0 {
+		t.Fatalf("sum %f should be zero", sum)
+	}
+
+	if machine.Dense64.Matrix[0] != 0 ||
+		machine.Dense64.Matrix[1] != 0 ||
+		machine.Dense64.Matrix[2] != 0 ||
+		machine.Dense64.Matrix[3] != 0 ||
+		machine.Dense64.Matrix[4] != 0 ||
+		machine.Dense64.Matrix[5] != 0 ||
+		machine.Dense64.Matrix[6] != 1 ||
+		machine.Dense64.Matrix[7] != 0 {
+		t.Fatalf("machine has bad state %f", machine.Dense64.Matrix)
+	}
+}
+
+func TestControlledNotDense128(t *testing.T) {
+	machine := MachineDense128{}
+	machine.One()
+	machine.One()
+	machine.Zero()
+
+	a := machine.ControlledNot([]Qubit{0}, 2)
+	b := machine.ControlledNot([]Qubit{0, 1}, 2)
+	c := b.Multiply(a)
+	d := c.Copy()
+	d.Transpose()
+	var sum complex128
+	for i := range c.Matrix {
+		sum += d.Matrix[i] - c.Matrix[i]
+	}
+	if sum != 0 {
+		t.Fatalf("sum %f should be zero", sum)
+	}
+
+	if machine.Dense128.Matrix[0] != 0 ||
+		machine.Dense128.Matrix[1] != 0 ||
+		machine.Dense128.Matrix[2] != 0 ||
+		machine.Dense128.Matrix[3] != 0 ||
+		machine.Dense128.Matrix[4] != 0 ||
+		machine.Dense128.Matrix[5] != 0 ||
+		machine.Dense128.Matrix[6] != 1 ||
+		machine.Dense128.Matrix[7] != 0 {
+		t.Fatalf("machine has bad state %f", machine.Dense128.Matrix)
+	}
+}
+
 func TestRXSparse64(t *testing.T) {
 	machine := MachineSparse64{}
 	qubit := machine.Zero()
