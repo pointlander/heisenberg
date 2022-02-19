@@ -1,0 +1,775 @@
+// Copyright 2022 The Heisenberg Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
+package heisenberg
+
+import (
+	"fmt"
+	//"math"
+	//"math/cmplx"
+)
+
+// Matrix128 is an algebriac matrix
+type Matrix128 struct {
+	R, C   int
+	Matrix []interface{}
+}
+
+func (a Matrix128) String() string {
+	output := ""
+	for i := 0; i < a.R; i++ {
+		for j := 0; j < a.C; j++ {
+			switch row := a.Matrix[i].(type) {
+			case []complex128:
+				output += fmt.Sprintf("%f ", row[j])
+			case map[int]complex128:
+				output += fmt.Sprintf("%f ", row[j])
+			default:
+				output += fmt.Sprintf("0 ")
+			}
+		}
+		output += fmt.Sprintf("\n")
+	}
+	return output
+}
+
+// MachineMatrix128 is a 128 bit sparse matrix machine
+type MachineMatrix128 struct {
+	Vector128
+	Qubits int
+}
+
+// Zero adds a zero to the matrix
+func (a *MachineMatrix128) Zero() Qubit {
+	qubit := Qubit(a.Qubits)
+	a.Qubits++
+	zero := Vector128{1, 0}
+	if qubit == 0 {
+		a.Vector128 = zero
+		return qubit
+	}
+	a.Vector128 = a.Tensor(zero)
+	return qubit
+}
+
+// One adds a one to the matrix
+func (a *MachineMatrix128) One() Qubit {
+	qubit := Qubit(a.Qubits)
+	a.Qubits++
+	one := Vector128{0, 1}
+	if qubit == 0 {
+		a.Vector128 = one
+		return qubit
+	}
+	a.Vector128 = a.Tensor(one)
+	return qubit
+}
+
+// Tensor product is the tensor product
+func (a *Matrix128) Tensor(b *Matrix128) *Matrix128 {
+	output := make([]interface{}, a.R*b.R)
+	width := a.C * b.C
+	for x, xx := range a.Matrix {
+		for y, yy := range b.Matrix {
+			switch row := output[x*b.R+y].(type) {
+			case []complex128:
+				switch rowA := xx.(type) {
+				case []complex128:
+					switch rowB := yy.(type) {
+					case []complex128:
+						for i, ii := range rowA {
+							for j, jj := range rowB {
+								row[i*b.C+j] = ii * jj
+							}
+						}
+					case map[int]complex128:
+						for i, ii := range rowA {
+							for j, jj := range rowB {
+								row[i*b.C+j] = ii * jj
+							}
+						}
+					default:
+					}
+				case map[int]complex128:
+					switch rowB := yy.(type) {
+					case []complex128:
+						for i, ii := range rowA {
+							for j, jj := range rowB {
+								row[i*b.C+j] = ii * jj
+							}
+						}
+					case map[int]complex128:
+						for i, ii := range rowA {
+							for j, jj := range rowB {
+								row[i*b.C+j] = ii * jj
+							}
+						}
+					default:
+					}
+				default:
+				}
+			case map[int]complex128:
+				switch rowA := xx.(type) {
+				case []complex128:
+					switch rowB := yy.(type) {
+					case []complex128:
+						for i, ii := range rowA {
+							for j, jj := range rowB {
+								value := ii * jj
+								if value != 0 {
+									row[i*b.C+j] = value
+								}
+								if length := len(row); length > 0 {
+									if float64(length)/float64(width) > .1 {
+										v := make([]complex128, width)
+										for key, value := range row {
+											v[key] = value
+										}
+										output[x*b.R+y] = v
+									} else {
+										output[x*b.R+y] = row
+									}
+								}
+							}
+						}
+					case map[int]complex128:
+						for i, ii := range rowA {
+							for j, jj := range rowB {
+								value := ii * jj
+								if value != 0 {
+									row[i*b.C+j] = value
+								}
+								if length := len(row); length > 0 {
+									if float64(length)/float64(width) > .1 {
+										v := make([]complex128, width)
+										for key, value := range row {
+											v[key] = value
+										}
+										output[x*b.R+y] = v
+									} else {
+										output[x*b.R+y] = row
+									}
+								}
+							}
+						}
+					default:
+					}
+				case map[int]complex128:
+					switch rowB := yy.(type) {
+					case []complex128:
+						for i, ii := range rowA {
+							for j, jj := range rowB {
+								value := ii * jj
+								if value != 0 {
+									row[i*b.C+j] = value
+								}
+								if length := len(row); length > 0 {
+									if float64(length)/float64(width) > .1 {
+										v := make([]complex128, width)
+										for key, value := range row {
+											v[key] = value
+										}
+										output[x*b.R+y] = v
+									} else {
+										output[x*b.R+y] = row
+									}
+								}
+							}
+						}
+					case map[int]complex128:
+						for i, ii := range rowA {
+							for j, jj := range rowB {
+								value := ii * jj
+								if value != 0 {
+									row[i*b.C+j] = value
+								}
+								if length := len(row); length > 0 {
+									if float64(length)/float64(width) > .1 {
+										v := make([]complex128, width)
+										for key, value := range row {
+											v[key] = value
+										}
+										output[x*b.R+y] = v
+									} else {
+										output[x*b.R+y] = row
+									}
+								}
+							}
+						}
+					default:
+					}
+				default:
+				}
+			default:
+				switch rowA := xx.(type) {
+				case []complex128:
+					switch rowB := yy.(type) {
+					case []complex128:
+						for i, ii := range rowA {
+							for j, jj := range rowB {
+								row := make(map[int]complex128)
+								value := ii * jj
+								if value != 0 {
+									row[i*b.C+j] = value
+								}
+								output[x*b.R+y] = row
+							}
+						}
+					case map[int]complex128:
+						for i, ii := range rowA {
+							for j, jj := range rowB {
+								row := make(map[int]complex128)
+								value := ii * jj
+								if value != 0 {
+									row[i*b.C+j] = value
+								}
+								output[x*b.R+y] = row
+							}
+						}
+					default:
+					}
+				case map[int]complex128:
+					switch rowB := yy.(type) {
+					case []complex128:
+						for i, ii := range rowA {
+							for j, jj := range rowB {
+								row := make(map[int]complex128)
+								value := ii * jj
+								if value != 0 {
+									row[i*b.C+j] = value
+								}
+								output[x*b.R+y] = row
+							}
+						}
+					case map[int]complex128:
+						for i, ii := range rowA {
+							for j, jj := range rowB {
+								row := make(map[int]complex128)
+								value := ii * jj
+								if value != 0 {
+									row[i*b.C+j] = value
+								}
+								output[x*b.R+y] = row
+							}
+						}
+					default:
+					}
+				default:
+				}
+			}
+		}
+	}
+
+	return &Matrix128{
+		R:      a.R * b.R,
+		C:      a.C * b.C,
+		Matrix: output,
+	}
+}
+
+// Multiply multiplies to matricies
+func (a *Matrix128) Multiply(b *Matrix128) *Matrix128 {
+	if a.C != b.R {
+		panic("invalid dimensions")
+	}
+	output := make([]interface{}, a.R)
+	width := b.C
+	for j := 0; j < b.C; j++ {
+		for x, xx := range a.Matrix {
+			switch rowA := xx.(type) {
+			case []complex128:
+				var sum complex128
+				for y, value := range rowA {
+					switch rowB := b.Matrix[y].(type) {
+					case []complex128:
+						sum += rowB[j] * value
+					case map[int]complex128:
+						sum += rowB[j] * value
+					default:
+					}
+				}
+				values := output[j]
+				switch row := values.(type) {
+				case []complex128:
+					row[x] = sum
+					output[j] = values
+				case map[int]complex128:
+					if sum != 0 {
+						row[x] = sum
+					}
+					if length := len(row); length > 0 {
+						if float64(length)/float64(width) > .1 {
+							v := make([]complex128, width)
+							for key, value := range row {
+								v[key] = value
+							}
+							output[j] = v
+						} else {
+							output[j] = row
+						}
+					}
+				default:
+					r := make(map[int]complex128)
+					r[x] = sum
+					output[j] = r
+				}
+			case map[int]complex128:
+				var sum complex128
+				for y, value := range rowA {
+					switch rowB := b.Matrix[y].(type) {
+					case []complex128:
+						sum += rowB[j] * value
+					case map[int]complex128:
+						sum += rowB[j] * value
+					default:
+					}
+				}
+				values := output[j]
+				switch row := values.(type) {
+				case []complex128:
+					row[x] = sum
+					output[j] = values
+				case map[int]complex128:
+					if sum != 0 {
+						row[x] = sum
+					}
+					if length := len(row); length > 0 {
+						if float64(length)/float64(width) > .1 {
+							v := make([]complex128, width)
+							for key, value := range row {
+								v[key] = value
+							}
+							output[j] = v
+						} else {
+							output[j] = row
+						}
+					}
+				default:
+					r := make(map[int]complex128)
+					r[x] = sum
+					output[j] = r
+				}
+			default:
+			}
+		}
+	}
+	return &Matrix128{
+		R:      a.R,
+		C:      b.C,
+		Matrix: output,
+	}
+}
+
+/*
+// Transpose transposes a matrix
+func (a *Matrix128) Transpose() {
+	for i := 0; i < a.R; i++ {
+		for j := 0; j < a.C; j++ {
+			ii := a.Matrix[i]
+			var value complex128
+			if ii != nil {
+				value = ii[j]
+			}
+			a.Matrix[j][i] = value
+		}
+	}
+	a.R, a.C = a.C, a.R
+}
+
+// Copy copies a matrix`
+func (a *Matrix128) Copy() *Matrix128 {
+	cp := &Matrix128{
+		R:      a.R,
+		C:      a.C,
+		Matrix: make([]map[int]complex128, a.R),
+	}
+	for a, aa := range a.Matrix {
+		value := cp.Matrix[a]
+		if value == nil {
+			value = make(map[int]complex128)
+		}
+		for b, bb := range aa {
+			value[b] = bb
+		}
+		cp.Matrix[a] = value
+	}
+	return cp
+}
+
+// Tensor product is the tensor product
+func (a Vector128) Tensor(b Vector128) Vector128 {
+	output := make(Vector128, 0, len(a)*len(b))
+	for _, ii := range a {
+		for _, jj := range b {
+			output = append(output, ii*jj)
+		}
+	}
+
+	return output
+}
+
+// MultiplyVector multiplies a matrix by a vector
+func (a *Matrix128) MultiplyVector(b Vector128) Vector128 {
+	if a.C != len(b) {
+		panic(fmt.Sprintf("invalid dimensions %d %d", a.C, len(b)))
+	}
+	output := make(Vector128, 0, a.R)
+	for _, xx := range a.Matrix {
+		var sum complex128
+		for y, value := range xx {
+			sum += b[y] * value
+		}
+		output = append(output, sum)
+	}
+	return output
+}
+
+// ControlledNot controlled not gate
+func (a *MachineMatrix128) ControlledNot(c []Qubit, t Qubit) *Matrix128 {
+	n := a.Qubits
+	p := &Matrix128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: 1,
+			},
+			map[int]complex128{
+				1: 1,
+			},
+		},
+	}
+	q := p
+	for i := 0; i < n-1; i++ {
+		q = p.Tensor(q)
+	}
+	d := q.R
+
+	index := make([]int64, 0)
+	for i := 0; i < d; i++ {
+		bits := int64(i)
+
+		// Apply X
+		apply := true
+		for _, j := range c {
+			if (bits>>(Qubit(n-1)-j))&1 == 0 {
+				apply = false
+				break
+			}
+		}
+
+		if apply {
+			if (bits>>(Qubit(n-1)-t))&1 == 0 {
+				bits |= 1 << (Qubit(n-1) - t)
+			} else {
+				bits &= ^(1 << (Qubit(n-1) - t))
+			}
+		}
+
+		index = append(index, bits)
+	}
+
+	g := Matrix128{
+		R:      q.R,
+		C:      q.C,
+		Matrix: make([]map[int]complex128, q.R),
+	}
+	for i, ii := range index {
+		g.Matrix[i] = q.Matrix[int(ii)]
+	}
+
+	a.Vector128 = g.MultiplyVector(a.Vector128)
+
+	return &g
+}
+
+// Multiply multiplies the machine by a matrix
+func (a *MachineMatrix128) Multiply(b *Matrix128, qubits ...Qubit) {
+	indexes := make(map[int]bool)
+	for _, value := range qubits {
+		indexes[int(value)] = true
+	}
+
+	identity := IMatrix128()
+	d := IMatrix128()
+	if indexes[0] {
+		d = b.Copy()
+	}
+	for i := 1; i < a.Qubits; i++ {
+		if indexes[i] {
+			d = d.Tensor(b)
+			continue
+		}
+
+		d = d.Tensor(identity)
+	}
+
+	a.Vector128 = d.MultiplyVector(a.Vector128)
+}
+
+// IMatrix128 identity matrix
+func IMatrix128() *Matrix128 {
+	return &Matrix128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: 1,
+			},
+			map[int]complex128{
+				1: 1,
+			},
+		},
+	}
+}
+
+// I multiply by identity
+func (a *MachineMatrix128) I(qubits ...Qubit) *MachineMatrix128 {
+	a.Multiply(IMatrix128(), qubits...)
+	return a
+}
+
+// HMatrix128 Hadamard matrix
+func HMatrix128() *Matrix128 {
+	v := complex(1/math.Sqrt2, 0)
+	return &Matrix128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: v,
+				1: v,
+			},
+			map[int]complex128{
+				0: v,
+				1: -v,
+			},
+		},
+	}
+}
+
+// H multiply by Hadamard gate
+func (a *MachineMatrix128) H(qubits ...Qubit) *MachineMatrix128 {
+	a.Multiply(HMatrix128(), qubits...)
+	return a
+}
+
+// XMatrix128 Pauli X matrix
+func XMatrix128() *Matrix128 {
+	return &Matrix128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				1: 1,
+			},
+			map[int]complex128{
+				0: 1,
+			},
+		},
+	}
+}
+
+// X multiply by Pauli X matrix
+func (a *MachineMatrix128) X(qubits ...Qubit) *MachineMatrix128 {
+	a.Multiply(XMatrix128(), qubits...)
+	return a
+}
+
+// YMatrix128 Pauli Y matrix
+func YMatrix128() *Matrix128 {
+	return &Matrix128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				1: -1i,
+			},
+			map[int]complex128{
+				0: 1i,
+			},
+		},
+	}
+}
+
+// Y multiply by Pauli Y matrix
+func (a *MachineMatrix128) Y(qubits ...Qubit) *MachineMatrix128 {
+	a.Multiply(YMatrix128(), qubits...)
+	return a
+}
+
+// ZMatrix128 Pauli Z matrix
+func ZMatrix128() *Matrix128 {
+	return &Matrix128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: 1,
+			},
+			map[int]complex128{
+				1: -1,
+			},
+		},
+	}
+}
+
+// Z multiply by Pauli Z matrix
+func (a *MachineMatrix128) Z(qubits ...Qubit) *MachineMatrix128 {
+	a.Multiply(ZMatrix128(), qubits...)
+	return a
+}
+
+// SMatrix128 phase gate
+func SMatrix128() *Matrix128 {
+	return &Matrix128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: 1,
+			},
+			map[int]complex128{
+				1: 1i,
+			},
+		},
+	}
+}
+
+// S multiply by phase matrix
+func (a *MachineMatrix128) S(qubits ...Qubit) *MachineMatrix128 {
+	a.Multiply(SMatrix128(), qubits...)
+	return a
+}
+
+// TMatrix128 T gate
+func TMatrix128() *Matrix128 {
+	return &Matrix128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: 1,
+			},
+			map[int]complex128{
+				1: cmplx.Exp(1i * math.Pi / 4),
+			},
+		},
+	}
+}
+
+// T multiply by T matrix
+func (a *MachineMatrix128) T(qubits ...Qubit) *MachineMatrix128 {
+	a.Multiply(TMatrix128(), qubits...)
+	return a
+}
+
+// UMatrix128 U gate
+func UMatrix128(theta, phi, lambda float64) *Matrix128 {
+	v := complex(theta/2, 0)
+	return &Matrix128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: cmplx.Cos(v),
+				1: -1 * cmplx.Exp(complex(0, lambda)) * cmplx.Sin(v),
+			},
+			map[int]complex128{
+				0: cmplx.Exp(complex(0, phi)) * cmplx.Sin(v),
+				1: cmplx.Exp(complex(0, (phi+lambda))) * cmplx.Cos(v),
+			},
+		},
+	}
+}
+
+// U multiply by U matrix
+func (a *MachineMatrix128) U(theta, phi, lambda float64, qubits ...Qubit) *MachineMatrix128 {
+	a.Multiply(UMatrix128(theta, phi, lambda), qubits...)
+	return a
+}
+
+// RXMatrix128 x rotation matrix
+func RXMatrix128(theta complex128) *Matrix128 {
+	return &Matrix128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: cmplx.Cos(theta),
+				1: -1i * cmplx.Sin(theta),
+			},
+			map[int]complex128{
+				0: -1i * cmplx.Sin(theta),
+				1: cmplx.Cos(theta),
+			},
+		},
+	}
+}
+
+// RX rotate X gate
+func (a *MachineMatrix128) RX(theta float64, qubits ...Qubit) *MachineMatrix128 {
+	a.Multiply(RXMatrix128(complex(theta/2, 0)), qubits...)
+	return a
+}
+
+// RYMatrix128 y rotation matrix
+func RYMatrix128(theta complex128) *Matrix128 {
+	return &Matrix128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: cmplx.Cos(theta),
+				1: -1 * cmplx.Sin(theta),
+			},
+			map[int]complex128{
+				0: cmplx.Sin(theta),
+				1: cmplx.Cos(theta),
+			},
+		},
+	}
+}
+
+// RY rotate Y gate
+func (a *MachineMatrix128) RY(theta float64, qubits ...Qubit) *MachineMatrix128 {
+	a.Multiply(RYMatrix128(complex(theta/2, 0)), qubits...)
+	return a
+}
+
+// RZMatrix128 z rotation matrix
+func RZMatrix128(theta complex128) *Matrix128 {
+	return &Matrix128{
+		R: 2,
+		C: 2,
+		Matrix: []map[int]complex128{
+			map[int]complex128{
+				0: cmplx.Exp(-1 * theta),
+			},
+			map[int]complex128{
+				1: cmplx.Exp(theta),
+			},
+		},
+	}
+}
+
+// RZ rotate Z gate
+func (a *MachineMatrix128) RZ(theta float64, qubits ...Qubit) *MachineMatrix128 {
+	a.Multiply(RZMatrix128(complex(theta/2, 0)), qubits...)
+	return a
+}
+
+// Swap swaps qubits`
+func (a *MachineMatrix128) Swap(qubits ...Qubit) *MachineMatrix128 {
+	length := len(qubits)
+
+	for i := 0; i < length/2; i++ {
+		c, t := qubits[i], qubits[(length-1)-i]
+		a.ControlledNot([]Qubit{c}, t)
+		a.ControlledNot([]Qubit{t}, c)
+		a.ControlledNot([]Qubit{c}, t)
+	}
+
+	return a
+}*/
