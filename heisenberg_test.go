@@ -65,6 +65,18 @@ func BenchmarkSparse128(b *testing.B) {
 	}
 }
 
+func BenchmarkMatrix128(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		machine := MachineMatrix128{}
+		for i := 0; i < 4; i++ {
+			machine.One()
+			machine.Zero()
+		}
+		machine.ControlledNot([]Qubit{0}, 1)
+		machine.ControlledNot([]Qubit{0, 1}, 2)
+	}
+}
+
 func TestTensor64(t *testing.T) {
 	p := &Sparse64{
 		R: 2,

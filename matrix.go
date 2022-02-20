@@ -6,8 +6,15 @@ package heisenberg
 
 import (
 	"fmt"
-	//"math"
-	//"math/cmplx"
+	"math"
+	"math/cmplx"
+)
+
+const (
+	// CutoffPercent is the precent for sparse matrix cutoff
+	CutoffPercent = .1
+	// CutoffSize is the size of a matrix row required for dense
+	CutoffSize = 256
 )
 
 // Matrix128 is an algebriac matrix
@@ -44,7 +51,8 @@ func (a *Matrix128) Set(i, j int, value complex128) {
 		row[j] = value
 	case map[int]complex128:
 		row[j] = value
-		if float64(len(row))/float64(a.C) > .1 {
+		if length := len(row); float64(length)/float64(a.C) > CutoffPercent &&
+			length > CutoffSize {
 			r := make([]complex128, a.C)
 			for key, value := range row {
 				r[key] = value
@@ -157,7 +165,8 @@ func (a *Matrix128) Tensor(b *Matrix128) *Matrix128 {
 									row[i*b.C+j] = value
 								}
 								if length := len(row); length > 0 {
-									if float64(length)/float64(width) > .1 {
+									if float64(length)/float64(width) > CutoffPercent &&
+										length > CutoffSize {
 										v := make([]complex128, width)
 										for key, value := range row {
 											v[key] = value
@@ -177,7 +186,8 @@ func (a *Matrix128) Tensor(b *Matrix128) *Matrix128 {
 									row[i*b.C+j] = value
 								}
 								if length := len(row); length > 0 {
-									if float64(length)/float64(width) > .1 {
+									if float64(length)/float64(width) > CutoffPercent &&
+										length > CutoffSize {
 										v := make([]complex128, width)
 										for key, value := range row {
 											v[key] = value
@@ -201,7 +211,8 @@ func (a *Matrix128) Tensor(b *Matrix128) *Matrix128 {
 									row[i*b.C+j] = value
 								}
 								if length := len(row); length > 0 {
-									if float64(length)/float64(width) > .1 {
+									if float64(length)/float64(width) > CutoffPercent &&
+										length > CutoffSize {
 										v := make([]complex128, width)
 										for key, value := range row {
 											v[key] = value
@@ -221,7 +232,8 @@ func (a *Matrix128) Tensor(b *Matrix128) *Matrix128 {
 									row[i*b.C+j] = value
 								}
 								if length := len(row); length > 0 {
-									if float64(length)/float64(width) > .1 {
+									if float64(length)/float64(width) > CutoffPercent &&
+										length > CutoffSize {
 										v := make([]complex128, width)
 										for key, value := range row {
 											v[key] = value
@@ -351,37 +363,31 @@ func (a *Matrix128) Transpose() *Matrix128 {
 	return &b
 }
 
-/*
 // Copy copies a matrix`
 func (a *Matrix128) Copy() *Matrix128 {
 	cp := &Matrix128{
 		R:      a.R,
 		C:      a.C,
-		Matrix: make([]map[int]complex128, a.R),
+		Matrix: make([]interface{}, a.R),
 	}
 	for a, aa := range a.Matrix {
-		value := cp.Matrix[a]
-		if value == nil {
-			value = make(map[int]complex128)
+		switch row := aa.(type) {
+		case []complex128:
+			value := make([]complex128, 0, len(row))
+			for _, bb := range row {
+				value = append(value, bb)
+			}
+			cp.Matrix[a] = value
+		case map[int]complex128:
+			value := make(map[int]complex128)
+			for b, bb := range row {
+				value[b] = bb
+			}
+			cp.Matrix[a] = value
+		default:
 		}
-		for b, bb := range aa {
-			value[b] = bb
-		}
-		cp.Matrix[a] = value
 	}
 	return cp
-}
-
-// Tensor product is the tensor product
-func (a Vector128) Tensor(b Vector128) Vector128 {
-	output := make(Vector128, 0, len(a)*len(b))
-	for _, ii := range a {
-		for _, jj := range b {
-			output = append(output, ii*jj)
-		}
-	}
-
-	return output
 }
 
 // MultiplyVector multiplies a matrix by a vector
@@ -391,11 +397,22 @@ func (a *Matrix128) MultiplyVector(b Vector128) Vector128 {
 	}
 	output := make(Vector128, 0, a.R)
 	for _, xx := range a.Matrix {
-		var sum complex128
-		for y, value := range xx {
-			sum += b[y] * value
+		switch row := xx.(type) {
+		case []complex128:
+			var sum complex128
+			for y, value := range row {
+				sum += b[y] * value
+			}
+			output = append(output, sum)
+		case map[int]complex128:
+			var sum complex128
+			for y, value := range row {
+				sum += b[y] * value
+			}
+			output = append(output, sum)
+		default:
+			output = append(output, 0)
 		}
-		output = append(output, sum)
 	}
 	return output
 }
@@ -406,7 +423,7 @@ func (a *MachineMatrix128) ControlledNot(c []Qubit, t Qubit) *Matrix128 {
 	p := &Matrix128{
 		R: 2,
 		C: 2,
-		Matrix: []map[int]complex128{
+		Matrix: []interface{}{
 			map[int]complex128{
 				0: 1,
 			},
@@ -448,7 +465,7 @@ func (a *MachineMatrix128) ControlledNot(c []Qubit, t Qubit) *Matrix128 {
 	g := Matrix128{
 		R:      q.R,
 		C:      q.C,
-		Matrix: make([]map[int]complex128, q.R),
+		Matrix: make([]interface{}, q.R),
 	}
 	for i, ii := range index {
 		g.Matrix[i] = q.Matrix[int(ii)]
@@ -488,7 +505,7 @@ func IMatrix128() *Matrix128 {
 	return &Matrix128{
 		R: 2,
 		C: 2,
-		Matrix: []map[int]complex128{
+		Matrix: []interface{}{
 			map[int]complex128{
 				0: 1,
 			},
@@ -511,7 +528,7 @@ func HMatrix128() *Matrix128 {
 	return &Matrix128{
 		R: 2,
 		C: 2,
-		Matrix: []map[int]complex128{
+		Matrix: []interface{}{
 			map[int]complex128{
 				0: v,
 				1: v,
@@ -535,7 +552,7 @@ func XMatrix128() *Matrix128 {
 	return &Matrix128{
 		R: 2,
 		C: 2,
-		Matrix: []map[int]complex128{
+		Matrix: []interface{}{
 			map[int]complex128{
 				1: 1,
 			},
@@ -557,7 +574,7 @@ func YMatrix128() *Matrix128 {
 	return &Matrix128{
 		R: 2,
 		C: 2,
-		Matrix: []map[int]complex128{
+		Matrix: []interface{}{
 			map[int]complex128{
 				1: -1i,
 			},
@@ -579,7 +596,7 @@ func ZMatrix128() *Matrix128 {
 	return &Matrix128{
 		R: 2,
 		C: 2,
-		Matrix: []map[int]complex128{
+		Matrix: []interface{}{
 			map[int]complex128{
 				0: 1,
 			},
@@ -601,7 +618,7 @@ func SMatrix128() *Matrix128 {
 	return &Matrix128{
 		R: 2,
 		C: 2,
-		Matrix: []map[int]complex128{
+		Matrix: []interface{}{
 			map[int]complex128{
 				0: 1,
 			},
@@ -623,7 +640,7 @@ func TMatrix128() *Matrix128 {
 	return &Matrix128{
 		R: 2,
 		C: 2,
-		Matrix: []map[int]complex128{
+		Matrix: []interface{}{
 			map[int]complex128{
 				0: 1,
 			},
@@ -646,7 +663,7 @@ func UMatrix128(theta, phi, lambda float64) *Matrix128 {
 	return &Matrix128{
 		R: 2,
 		C: 2,
-		Matrix: []map[int]complex128{
+		Matrix: []interface{}{
 			map[int]complex128{
 				0: cmplx.Cos(v),
 				1: -1 * cmplx.Exp(complex(0, lambda)) * cmplx.Sin(v),
@@ -670,7 +687,7 @@ func RXMatrix128(theta complex128) *Matrix128 {
 	return &Matrix128{
 		R: 2,
 		C: 2,
-		Matrix: []map[int]complex128{
+		Matrix: []interface{}{
 			map[int]complex128{
 				0: cmplx.Cos(theta),
 				1: -1i * cmplx.Sin(theta),
@@ -694,7 +711,7 @@ func RYMatrix128(theta complex128) *Matrix128 {
 	return &Matrix128{
 		R: 2,
 		C: 2,
-		Matrix: []map[int]complex128{
+		Matrix: []interface{}{
 			map[int]complex128{
 				0: cmplx.Cos(theta),
 				1: -1 * cmplx.Sin(theta),
@@ -718,7 +735,7 @@ func RZMatrix128(theta complex128) *Matrix128 {
 	return &Matrix128{
 		R: 2,
 		C: 2,
-		Matrix: []map[int]complex128{
+		Matrix: []interface{}{
 			map[int]complex128{
 				0: cmplx.Exp(-1 * theta),
 			},
@@ -747,4 +764,4 @@ func (a *MachineMatrix128) Swap(qubits ...Qubit) *MachineMatrix128 {
 	}
 
 	return a
-}*/
+}
