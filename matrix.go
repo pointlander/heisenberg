@@ -34,6 +34,42 @@ func (a Matrix128) String() string {
 	return output
 }
 
+// Set set a value
+func (a *Matrix128) Set(i, j int, value complex128) {
+	if value == 0 {
+		return
+	}
+	switch row := a.Matrix[i].(type) {
+	case []complex128:
+		row[j] = value
+	case map[int]complex128:
+		row[j] = value
+		if float64(len(row))/float64(a.C) > .1 {
+			r := make([]complex128, a.C)
+			for key, value := range row {
+				r[key] = value
+			}
+			a.Matrix[i] = r
+		}
+	default:
+		r := make(map[int]complex128)
+		r[j] = value
+		a.Matrix[i] = r
+	}
+}
+
+// Get get a value
+func (a *Matrix128) Get(i, j int) complex128 {
+	switch row := a.Matrix[i].(type) {
+	case []complex128:
+		return row[j]
+	case map[int]complex128:
+		return row[j]
+	default:
+		return 0
+	}
+}
+
 // MachineMatrix128 is a 128 bit sparse matrix machine
 type MachineMatrix128 struct {
 	Vector128
@@ -273,110 +309,49 @@ func (a *Matrix128) Multiply(b *Matrix128) *Matrix128 {
 	if a.C != b.R {
 		panic("invalid dimensions")
 	}
-	output := make([]interface{}, a.R)
-	width := b.C
+	output := Matrix128{
+		R:      a.R,
+		C:      b.C,
+		Matrix: make([]interface{}, a.R),
+	}
 	for j := 0; j < b.C; j++ {
 		for x, xx := range a.Matrix {
 			switch rowA := xx.(type) {
 			case []complex128:
 				var sum complex128
 				for y, value := range rowA {
-					switch rowB := b.Matrix[y].(type) {
-					case []complex128:
-						sum += rowB[j] * value
-					case map[int]complex128:
-						sum += rowB[j] * value
-					default:
-					}
+					sum += b.Get(j, y) * value
 				}
-				values := output[j]
-				switch row := values.(type) {
-				case []complex128:
-					row[x] = sum
-					output[j] = values
-				case map[int]complex128:
-					if sum != 0 {
-						row[x] = sum
-					}
-					if length := len(row); length > 0 {
-						if float64(length)/float64(width) > .1 {
-							v := make([]complex128, width)
-							for key, value := range row {
-								v[key] = value
-							}
-							output[j] = v
-						} else {
-							output[j] = row
-						}
-					}
-				default:
-					r := make(map[int]complex128)
-					r[x] = sum
-					output[j] = r
-				}
+				output.Set(j, x, sum)
 			case map[int]complex128:
 				var sum complex128
 				for y, value := range rowA {
-					switch rowB := b.Matrix[y].(type) {
-					case []complex128:
-						sum += rowB[j] * value
-					case map[int]complex128:
-						sum += rowB[j] * value
-					default:
-					}
+					sum += b.Get(j, y) * value
 				}
-				values := output[j]
-				switch row := values.(type) {
-				case []complex128:
-					row[x] = sum
-					output[j] = values
-				case map[int]complex128:
-					if sum != 0 {
-						row[x] = sum
-					}
-					if length := len(row); length > 0 {
-						if float64(length)/float64(width) > .1 {
-							v := make([]complex128, width)
-							for key, value := range row {
-								v[key] = value
-							}
-							output[j] = v
-						} else {
-							output[j] = row
-						}
-					}
-				default:
-					r := make(map[int]complex128)
-					r[x] = sum
-					output[j] = r
-				}
+				output.Set(j, x, sum)
 			default:
 			}
 		}
 	}
-	return &Matrix128{
-		R:      a.R,
-		C:      b.C,
-		Matrix: output,
+	return &output
+}
+
+// Transpose transposes a matrix
+func (a *Matrix128) Transpose() *Matrix128 {
+	b := Matrix128{
+		R:      a.C,
+		C:      a.R,
+		Matrix: make([]interface{}, a.R),
 	}
+	for i := 0; i < a.R; i++ {
+		for j := 0; j < a.C; j++ {
+			b.Set(j, i, a.Get(i, j))
+		}
+	}
+	return &b
 }
 
 /*
-// Transpose transposes a matrix
-func (a *Matrix128) Transpose() {
-	for i := 0; i < a.R; i++ {
-		for j := 0; j < a.C; j++ {
-			ii := a.Matrix[i]
-			var value complex128
-			if ii != nil {
-				value = ii[j]
-			}
-			a.Matrix[j][i] = value
-		}
-	}
-	a.R, a.C = a.C, a.R
-}
-
 // Copy copies a matrix`
 func (a *Matrix128) Copy() *Matrix128 {
 	cp := &Matrix128{
