@@ -574,17 +574,6 @@ func (a Sparse128) String() string {
 	return output
 }
 
-// Vector128 is a 128 bit vector
-type Vector128 []complex128
-
-func (a Vector128) String() string {
-	output := ""
-	for _, value := range a {
-		output += fmt.Sprintf("%f ", value)
-	}
-	return output
-}
-
 // MachineSparse128 is a 128 bit sparse matrix machine
 type MachineSparse128 struct {
 	Vector128
@@ -715,18 +704,6 @@ func (a *Sparse128) Copy() *Sparse128 {
 		cp.Matrix[a] = value
 	}
 	return cp
-}
-
-// Tensor product is the tensor product
-func (a Vector128) Tensor(b Vector128) Vector128 {
-	output := make(Vector128, 0, len(a)*len(b))
-	for _, ii := range a {
-		for _, jj := range b {
-			output = append(output, ii*jj)
-		}
-	}
-
-	return output
 }
 
 // MultiplyVector multiplies a matrix by a vector

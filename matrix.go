@@ -41,6 +41,17 @@ func (a Matrix128) String() string {
 	return output
 }
 
+// Vector128 is a 128 bit vector
+type Vector128 []complex128
+
+func (a Vector128) String() string {
+	output := ""
+	for _, value := range a {
+		output += fmt.Sprintf("%f ", value)
+	}
+	return output
+}
+
 // Set set a value
 func (a *Matrix128) Set(i, j int, value complex128) {
 	if value == 0 {
@@ -388,6 +399,18 @@ func (a *Matrix128) Copy() *Matrix128 {
 		}
 	}
 	return cp
+}
+
+// Tensor product is the tensor product
+func (a Vector128) Tensor(b Vector128) Vector128 {
+	output := make(Vector128, 0, len(a)*len(b))
+	for _, ii := range a {
+		for _, jj := range b {
+			output = append(output, ii*jj)
+		}
+	}
+
+	return output
 }
 
 // MultiplyVector multiplies a matrix by a vector
