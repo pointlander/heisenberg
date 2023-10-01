@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"math"
 	"math/cmplx"
+	"math/rand"
+	"sort"
 )
 
 // Dense64 is an algebriac matrix
@@ -538,6 +540,34 @@ func (a *Dense128) Transpose() {
 	a.R, a.C = a.C, a.R
 }
 
+// Conjugate computes the complex conjugate
+func (a *Dense128) Conjugate() {
+	for k, v := range a.Matrix {
+		a.Matrix[k] = cmplx.Conj(v)
+	}
+}
+
+// Sub subtracts two matrices
+func (a *Dense128) Sub(b *Dense128) {
+	for k := range a.Matrix {
+		a.Matrix[k] -= b.Matrix[k]
+	}
+}
+
+// ComplexMul multiplies two complex matrices
+func (a *Dense128) Mul(b *Dense128) {
+	cp := a.Copy()
+	for i := 0; i < b.R; i++ {
+		for j := 0; j < b.C; j++ {
+			var sum complex128
+			for k := 0; k < a.C; k++ {
+				sum += cp.Matrix[i*a.C+k] * b.Matrix[k*b.C+j]
+			}
+			a.Matrix[i*a.C+j] = sum
+		}
+	}
+}
+
 // Copy copies a matrix`
 func (a *Dense128) Copy() *Dense128 {
 	cp := &Dense128{
@@ -840,4 +870,92 @@ func (a *MachineDense128) Swap(qubits ...Qubit) *MachineDense128 {
 	}
 
 	return a
+}
+
+type Point struct {
+	X, Y float64
+}
+
+// Points returns the point representation of the quantum algorithm.
+func (d *MachineDense128) Points() []Point {
+	rng := rand.New(rand.NewSource(1))
+	type Genome struct {
+		Points  []Point
+		Fitness float64
+	}
+	cc := HDense128()
+	fitness := func(g Genome) float64 {
+		a := make([][]complex128, len(g.Points))
+		for i := 0; i < len(g.Points); i++ {
+			for j := 0; j < len(g.Points); j++ {
+				a[i] = append(a[i], complex(g.Points[j].X-g.Points[i].X, g.Points[j].Y-g.Points[i].Y))
+			}
+		}
+		aa := Dense128{
+			R:      len(a),
+			C:      len(a[0]),
+			Matrix: make([]complex128, 0, len(a)*len(a[0])),
+		}
+		for i := 0; i < len(a); i++ {
+			for j := 0; j < len(a[i]); j++ {
+				aa.Matrix = append(aa.Matrix, a[i][j])
+			}
+		}
+		bb := aa.Copy()
+		aa.Transpose()
+		aa.Conjugate()
+		bb.Mul(&aa)
+		bb.Sub(cc)
+		sum := 0.0
+		for _, v := range bb.Matrix {
+			sum += cmplx.Abs(v)
+		}
+		return sum
+	}
+	pop := make([]Genome, 0, 1024)
+	for i := 0; i < 1024; i++ {
+		p := make([]Point, 0, cc.R)
+		for j := 0; j < cc.R; j++ {
+			p = append(p, Point{rng.NormFloat64(), rng.NormFloat64()})
+		}
+		pop = append(pop, Genome{Points: p})
+	}
+	generation := 0
+	for {
+		for i := 0; i < len(pop); i++ {
+			pop[i].Fitness = fitness(pop[i])
+		}
+		sort.Slice(pop, func(i, j int) bool {
+			return pop[i].Fitness < pop[j].Fitness
+		})
+		if pop[0].Fitness < 0.0001 || generation > 8*1024 {
+			return pop[0].Points
+		}
+		fmt.Println(pop[0].Fitness)
+		pop = pop[:128]
+		length := len(pop)
+		for i := 0; i < length/2; i++ {
+			a := rng.Intn(len(pop)) / 2
+			b := rng.Intn(len(pop)) / 2
+			pointsA := make([]Point, len(pop[a].Points))
+			copy(pointsA, pop[a].Points)
+			pointsB := make([]Point, len(pop[b].Points))
+			copy(pointsB, pop[b].Points)
+			x := &pointsA[rng.Intn(len(pop[a].Points))]
+			y := &pointsB[rng.Intn(len(pop[b].Points))]
+			x.X, y.X = y.X, x.X
+			pop = append(pop, Genome{Points: pointsA})
+			pop = append(pop, Genome{Points: pointsB})
+		}
+		for i := 0; i < length; i++ {
+			a := rng.Intn(len(pop)) / 2
+			pointsA := make([]Point, len(pop[a].Points))
+			copy(pointsA, pop[a].Points)
+			x := &pointsA[rng.Intn(len(pop[a].Points))]
+			x.X += rng.NormFloat64()
+			x.Y += rng.NormFloat64()
+			pop = append(pop, Genome{Points: pointsA})
+		}
+		generation++
+	}
 }
